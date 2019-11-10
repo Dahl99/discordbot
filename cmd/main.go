@@ -14,8 +14,8 @@ import (
 const prefix string = "+"
 
 func main() {
-	dg, err := discordgo.New("Bot " + authToken)
 
+	dg, err := discordgo.New("Bot " + authToken) // Initializing discord session
 	if err != nil {
 		log.Println("error creating Discord session,", err)
 		return
@@ -23,7 +23,7 @@ func main() {
 
 	dg.AddHandler(discordbot.MessageCreate)
 
-	if err := dg.Open(); err != nil {
+	if err := dg.Open(); err != nil { // Creating a connection
 		log.Println("Error opening connection,", err)
 	}
 
