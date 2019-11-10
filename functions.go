@@ -1,6 +1,7 @@
 package discordbot
 
 import (
+	"log"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -19,6 +20,13 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	switch cmd[0] {
 	case prefix + "Ping":
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
+	case prefix + "Card":
+		if len(cmd) == 1 { // Checks if card name is missing
+			log.Println("Missing card name!")
+			s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" missing card name!")
+		} else {
+			s.ChannelMessageSend(m.ChannelID, getCard(cmd))
+		}
 	default:
 		return
 	}
