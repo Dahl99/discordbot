@@ -91,7 +91,7 @@ func replaceSpace(s []string) string {
 			i++ // Counts up
 		}
 	} else { // If name is 1 word, name is set
-		retString = s[1]
+		retString = s[0]
 	}
 
 	return retString // Returns name with "_" instead of spaces or 1 word name
