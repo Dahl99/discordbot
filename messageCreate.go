@@ -19,14 +19,21 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	cmd := strings.Split(m.Content, " ") //	Splitting command into string slice
 
 	switch cmd[0] {
-	case prefix + "Ping":
+	case prefix + "ping":
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
-	case prefix + "Card":
+	case prefix + "card":
 		if len(cmd) == 1 { // Checks if card name is missing
 			log.Println("Missing card name!")
 			s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" missing card name!")
 		} else {
 			s.ChannelMessageSend(m.ChannelID, getCard(cmd))
+		}
+	case prefix + "dice":
+		if len(cmd) != 2 { // Checks if die command was used properly
+			log.Println("Dice command used wrongly!")
+			s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" dice command used wrongly!")
+		} else {
+			s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" rolled "+diceRoll(cmd))
 		}
 	default:
 		return
