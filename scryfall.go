@@ -13,9 +13,6 @@ const scryfallBaseURL string = "https://api.scryfall.com/cards/"
 //Const containing string to be sent if scryfall API is unavailable
 const scryfallNotAvailable string = "Scryfall API not available at the moment. Please try again later."
 
-//Const containing string to be sent if decoding fails
-const decodingFailed string = "Something wrong happened when decoding data from Scryfall"
-
 //Struct to store info from first http.Get() and autocomplete search
 type autoResult struct {
 	Data []string `json:"data"`
