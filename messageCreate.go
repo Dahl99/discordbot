@@ -32,17 +32,11 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			s.ChannelMessageSend(m.ChannelID, getCard(cmd))
 		}
 	case prefix + "dice":
-		if len(cmd) != 2 { // Checks if die command was used properly
-			log.Println("Dice command used wrongly!")
-			s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" dice command used wrongly!")
-		} else {
+		if len(cmd) == 2 { // Checks if die command was used properly {
 			s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" rolled "+diceRoll(cmd))
 		}
 	case prefix + "insult":
-		if len(cmd) != 1 { // Checks if die command was used properly
-			log.Println("Insult command used wrongly!")
-			s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" insult command used wrongly!")
-		} else {
+		if len(cmd) == 1 {
 			s.ChannelMessageSend(m.ChannelID, getInsult())
 		}
 	default:

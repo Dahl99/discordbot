@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 //Const containing the root of the url
@@ -40,6 +41,8 @@ func getCard(n []string) string {
 		return scryfallNotAvailable
 	}
 
+	time.Sleep(125 * time.Millisecond) // Sleeping for 0,125 seconds to prevent spam
+
 	//	Decoding results into autoresult struct object
 	var autoresult autoResult
 	err = json.NewDecoder(res.Body).Decode(&autoresult)
@@ -49,15 +52,16 @@ func getCard(n []string) string {
 	}
 	res.Body.Close() // Closing body to prevent resource leak
 
-	cardName := strings.Split(autoresult.Data[0], " ") // Splitting string on each space
-	name = replaceSpace(cardName)                      // Replaceing space with "_" to avoid url problems
-	URL = scryfallBaseURL + "named?exact=" + name      // Sets url for exact card get request
+	name = replaceSpace(strings.Split(autoresult.Data[0], " ")) // Replacing space with "_" to avoid url problems
+	URL = scryfallBaseURL + "named?exact=" + name               // Sets url for exact card get request
 
 	res, err = http.Get(URL) // Fetching exact card
 	if err != nil {          // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
 		return scryfallNotAvailable
 	}
+
+	time.Sleep(125 * time.Millisecond) // Sleeping for 0,125 seconds to prevent spam
 
 	// Decoding results into exactResult
 	var card exactResult
