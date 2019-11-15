@@ -52,6 +52,11 @@ func getCard(n []string) string {
 	}
 	res.Body.Close() // Closing body to prevent resource leak
 
+	// If no card was found, a message is sent
+	if autoresult.Data[0] == "" {
+		return "Unable to find requested card"
+	}
+
 	name = replaceSpace(strings.Split(autoresult.Data[0], " ")) // Replacing space with "_" to avoid url problems
 	URL = scryfallBaseURL + "named?exact=" + name               // Sets url for exact card get request
 
