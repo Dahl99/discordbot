@@ -18,7 +18,7 @@ type insult struct {
 }
 
 func getInsult() string {
-	res, err := http.Get(insultURL) // Fetching most probable card using scryfall autocomplete
+	res, err := http.Get(insultURL) // Fetching an insult
 	if err != nil {                 // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
 		return evilInsultNotAvailable
