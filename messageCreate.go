@@ -10,6 +10,9 @@ import (
 //Const containing the prefix needed to use bot commands
 const prefix string = "+"
 
+//Help contains all the commands available
+const help string = "Current commands are:\n\tping\n\tcard <card name>\n\tdice <die sides>\n\tinsult\n\tadvice"
+
 //Const containing string to be sent if decoding fails
 const decodingFailed string = "Something wrong happened when decoding data"
 
@@ -22,6 +25,8 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	cmd := strings.Split(m.Content, " ") //	Splitting command into string slice
 
 	switch cmd[0] {
+	case prefix + "help":
+		s.ChannelMessageSend(m.ChannelID, help)
 	case prefix + "ping":
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
 	case prefix + "card":
