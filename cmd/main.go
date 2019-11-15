@@ -27,8 +27,6 @@ func main() {
 		log.Println("Error opening connection,", err)
 	}
 
-	// func (s *Session) UpdateStatus(idle int, game string) (err error
-
 	dg.UpdateStatus(1, "+help")
 
 	fmt.Println("Bot is running. Press Ctrl + C to exit.")
