@@ -32,7 +32,11 @@ type exactResult struct {
 //getCard() fetches a card based on which card name used in command
 func getCard(n []string) string {
 
-	name := replaceSpace(removeOrdMatter(n, 0))       // Replaces the spaces with "_" to avoid url problems
+	name := replaceSpace(removeOrdMatter(n)) // Replaces the spaces with "_" to avoid url problems
+	if len(name) <= 2 {
+		return "Name needs to have 3 or more letters to search"
+	}
+
 	URL := scryfallBaseURL + "autocomplete?q=" + name // Sets url for autocomplete get request
 
 	res, err := http.Get(URL) // Fetching most probable card using scryfall autocomplete
@@ -53,7 +57,7 @@ func getCard(n []string) string {
 	res.Body.Close() // Closing body to prevent resource leak
 
 	// If no card was found, a message is sent
-	if autoresult.Data[0] == "" {
+	if len(autoresult.Data) == 0 {
 		return "Unable to find requested card"
 	}
 
@@ -104,6 +108,6 @@ func replaceSpace(s []string) string {
 }
 
 //	Removes an index from a string slice while keeping same order
-func removeOrdMatter(s []string, ind int) []string {
-	return append(s[:ind], s[ind+1:]...)
+func removeOrdMatter(s []string) []string {
+	return append(s[:0], s[1:]...)
 }
