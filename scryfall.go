@@ -24,9 +24,15 @@ type imageURI struct {
 	Png string `json:"png"`
 }
 
+type prices struct {
+	Usd     string `json:"usd"`
+	UsdFoil string `json:"usd_foil"`
+}
+
 //Struct used to store data from second http.Get()
 type exactResult struct {
-	Image imageURI `json:"image_uris"`
+	Image  imageURI `json:"image_uris"`
+	Prices prices   `json:"prices"`
 }
 
 //getCard() fetches a card based on which card name used in command
@@ -81,7 +87,16 @@ func getCard(n []string) string {
 	}
 	res.Body.Close() // Closing body to prevent resource leak
 
-	return card.Image.Png // Returning url to png version of card
+	//	Making the returned string
+	retString := "\nPrice:\n\tUSD = " + card.Prices.Usd
+
+	if card.Prices.UsdFoil != "" {
+		retString += "\n\tUSD Foil = " + card.Prices.UsdFoil
+	}
+
+	retString += "\n" + card.Image.Png
+
+	return retString // Returning url to png version of card
 }
 
 //	This function replaces spaces in a string slice with "_"
