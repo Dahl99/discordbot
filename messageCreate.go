@@ -2,6 +2,7 @@ package discordbot
 
 import (
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -37,8 +38,12 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			s.ChannelMessageSend(m.ChannelID, getCard(cmd))
 		}
 	case prefix + "dice":
-		if len(cmd) == 2 { // Checks if die command was used properly
-			s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" rolled "+diceRoll(cmd))
+		if len(cmd) == 2 && cmd[1] >= "2" { // Checks if die command has correct length
+			if _, err := strconv.Atoi(cmd[1]); err == nil { //	Checks if user entered a number
+				s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" rolled "+diceRoll(cmd))
+			} else {
+				s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" "+cmd[1]+" is not a number!")
+			}
 		}
 	case prefix + "insult":
 		if len(cmd) == 1 { // Checks if insult command was used properly
