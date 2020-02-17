@@ -6,9 +6,6 @@ import (
 	"net/http"
 )
 
-//contains url to adviceslip API
-const adviceSlipURL string = "https://api.adviceslip.com/advice"
-
 //Struct used to store advice in json
 type slip struct {
 	Advice string `json:"advice"`
@@ -23,7 +20,7 @@ func getAdvice() string {
 	res, err := http.Get(adviceSlipURL) // Fetching an advice
 	if err != nil {                     // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
-		return scryfallNotAvailable
+		return adviceslipNotAvailable
 	}
 
 	//	Decoding results into autoresult struct object

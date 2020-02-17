@@ -6,12 +6,6 @@ import (
 	"net/http"
 )
 
-//insultURL contains the url for the API generating insults
-const insultURL string = "https://evilinsult.com/generate_insult.php?lang=en&type=json"
-
-//String to be sent if Evil Insult API isn't available
-const evilInsultNotAvailable string = "Evil Insult API not available at the moment. Please try again later."
-
 // Struct to store fetched data from Evil Insult API
 type insult struct {
 	Insult string `json:"insult"`

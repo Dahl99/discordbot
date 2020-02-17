@@ -11,8 +11,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-const prefix string = "+"
-
 func main() {
 
 	dg, err := discordgo.New("Bot " + authToken) // Initializing discord session

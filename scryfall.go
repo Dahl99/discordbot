@@ -4,24 +4,16 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 )
-
-//Const containing the root of the url
-const scryfallBaseURL string = "https://api.scryfall.com/cards/"
-
-//Const containing string to be sent if scryfall API is unavailable
-const scryfallNotAvailable string = "Scryfall API not available at the moment. Please try again later."
-
-//Struct to store info from first http.Get() and autocomplete search
-type autoResult struct {
-	Data []string `json:"data"`
-}
 
 //Sub struct in exactResult struct. It's used to store the imageURIs from scryfall api
 type imageURI struct {
 	Png string `json:"png"`
+}
+
+type cardFaces struct {
+	Image imageURI `json:"image_uris"`
 }
 
 type prices struct {
@@ -30,9 +22,11 @@ type prices struct {
 }
 
 //Struct used to store data from second http.Get()
-type exactResult struct {
-	Image  imageURI `json:"image_uris"`
-	Prices prices   `json:"prices"`
+type fuzzyResult struct {
+	Name   string       `json:"name"`
+	Image  imageURI     `json:"image_uris"`
+	Prices prices       `json:"prices"`
+	Faces  [2]cardFaces `json:"card_faces"`
 }
 
 //getCard() fetches a card based on which card name used in command
@@ -43,58 +37,50 @@ func getCard(n []string) string {
 		return "Name needs to have 3 or more letters to search"
 	}
 
-	URL := scryfallBaseURL + "autocomplete?q=" + name // Sets url for autocomplete get request
+	URL := scryfallBaseURL + name // Sets url for exact card get request
 
-	res, err := http.Get(URL) // Fetching most probable card using scryfall autocomplete
+	res, err := http.Get(URL) // Fetching exact card
 	if err != nil {           // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
 		return scryfallNotAvailable
 	}
 
-	time.Sleep(125 * time.Millisecond) // Sleeping for 0,125 seconds to prevent spam
-
-	//	Decoding results into autoresult struct object
-	var autoresult autoResult
-	err = json.NewDecoder(res.Body).Decode(&autoresult)
-	if err != nil {
-		log.Println(err)
-		return decodingFailed
-	}
-	res.Body.Close() // Closing body to prevent resource leak
-
-	// If no card was found, a message is sent
-	if len(autoresult.Data) == 0 {
-		return "Unable to find requested card"
-	}
-
-	name = replaceSpace(strings.Split(autoresult.Data[0], " ")) // Replacing space with "_" to avoid url problems
-	URL = scryfallBaseURL + "named?exact=" + name               // Sets url for exact card get request
-
-	res, err = http.Get(URL) // Fetching exact card
-	if err != nil {          // Checking for errors
-		log.Println(http.StatusServiceUnavailable)
-		return scryfallNotAvailable
-	}
-
-	time.Sleep(125 * time.Millisecond) // Sleeping for 0,125 seconds to prevent spam
+	time.Sleep(200 * time.Millisecond) // Sleeping for 0,2 seconds to prevent spam
 
 	// Decoding results into exactResult
-	var card exactResult
+	var card fuzzyResult
 	err = json.NewDecoder(res.Body).Decode(&card)
 	if err != nil {
 		log.Println(err)
 		return decodingFailed
 	}
+
+	if card.Image.Png == "" && card.Faces[0].Image.Png == "" && card.Faces[1].Image.Png == "" {
+		return "Unable to find requested card"
+	}
+
 	res.Body.Close() // Closing body to prevent resource leak
 
 	//	Making the returned string
-	retString := "\nPrice:\n\tUSD = " + card.Prices.Usd
+	var retString string
+
+	if card.Prices.Usd != "" || card.Prices.UsdFoil != "" {
+		retString += "\nTCGPlayer price:"
+	}
+
+	if card.Prices.Usd != "" {
+		retString += "\n\tUSD = " + card.Prices.Usd
+	}
 
 	if card.Prices.UsdFoil != "" {
 		retString += "\n\tUSD Foil = " + card.Prices.UsdFoil
 	}
 
-	retString += "\n" + card.Image.Png
+	if card.Image.Png != "" {
+		retString += "\n" + card.Image.Png
+	} else {
+		retString += "\n" + card.Faces[0].Image.Png + "\n" + card.Faces[1].Image.Png
+	}
 
 	return retString // Returning url to png version of card
 }

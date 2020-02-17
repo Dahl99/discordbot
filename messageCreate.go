@@ -8,15 +8,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-//Const containing the prefix needed to use bot commands
-const prefix string = "+"
-
-//Help contains all the commands available
-const help string = "Current commands are:\n\tping\n\tcard <card name>\n\tdice <die sides>\n\tinsult\n\tadvice"
-
-//Const containing string to be sent if decoding fails
-const decodingFailed string = "Something wrong happened when decoding data"
-
 //MessageCreate will be called everytime a new message is sent in a channel the bot has access to
 func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID { // Preventing bot from using own commands
