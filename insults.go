@@ -4,11 +4,19 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // Struct to store fetched data from Evil Insult API
 type insult struct {
 	Insult string `json:"insult"`
+}
+
+func postInsult(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
+	if len(cmd) == 1 { // Checks if insult command was used properly
+		s.ChannelMessageSend(m.ChannelID, getInsult())
+	}
 }
 
 func getInsult() string {

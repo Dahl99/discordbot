@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 //Sub struct in exactResult struct. It's used to store the imageURIs from scryfall api
@@ -27,6 +29,15 @@ type fuzzyResult struct {
 	Image  imageURI     `json:"image_uris"`
 	Prices prices       `json:"prices"`
 	Faces  [2]cardFaces `json:"card_faces"`
+}
+
+func postCard(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
+	if len(cmd) == 1 { // Checks if card name is missing
+		log.Println("Missing card name!")
+		s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" missing card name!")
+	} else {
+		s.ChannelMessageSend(m.ChannelID, getCard(cmd))
+	}
 }
 
 //getCard() fetches a card based on which card name used in command

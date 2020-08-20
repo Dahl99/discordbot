@@ -1,6 +1,6 @@
 package discordbot
 
-//									globals
+//									global
 //-----------------------------------------------------------------------------
 
 //Const containing string to be sent if decoding fails
@@ -15,7 +15,7 @@ const prefix string = "+"
 //Help contains all the commands available
 const help string = "Current commands are:\n\tping\n\tcard <card name>\n\tdice <die sides>\n\tinsult\n\tadvice"
 
-//									scryfall.go
+//									card.go
 //-----------------------------------------------------------------------------
 
 //Const containing the root of the url

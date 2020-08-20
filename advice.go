@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 //Struct used to store advice in json
@@ -14,6 +16,12 @@ type slip struct {
 //Struct containing the advice slip
 type allSlips struct {
 	Slips slip `json:"slip"`
+}
+
+func postAdvice(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
+	if len(cmd) == 1 { // Checks if advice command was used properly
+		s.ChannelMessageSend(m.ChannelID, getAdvice())
+	}
 }
 
 func getAdvice() string {
