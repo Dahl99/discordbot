@@ -34,13 +34,14 @@ This discord bot is built with:
 
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
 In order to run this project you will need the following:
+
 * Go
+* Discord account
 
 ### Installation
 
@@ -52,25 +53,24 @@ In order to run this project you will need the following:
    ```sh
    git clone https://github.com/Dahl99/DiscordBot.git
    ```
-3. Install [DiscordGo](https://github.com/bwmarrin/discordgo)
+6. Install [DiscordGo](https://github.com/bwmarrin/discordgo)
    ```sh
    go get github.com/bwmarrin/discordgo
    ```
-4. Create the file `token.go` in the cmd/ folder and set the token
-   ```Go
-   const authToken string = "ENTER YOUR TOKEN";
-   ```
-   
+7. Create the json file `bot.json` in the root folder and add the following:
+    ```json
+    {
+      "token":"token goes here",
+      "status":"game status goes here"
+    }
+    ```
+
 ## Usage
 
 To run the discord bot from root directory:
-```sh
-go run cmd/*.go
-```
 
-To run the discord bot from cmd/ directory:
 ```sh
-go run *.go
+go run cmd/main.go
 ```
 
 ## Contact
