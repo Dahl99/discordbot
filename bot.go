@@ -1,10 +1,36 @@
 package discordbot
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+type bot struct {
+	Token string
+	Status string
+}
+
+
+// readJsonBotData reads the data the bot needs from the provided JSON file
+func ReadJsonBotData() bot {
+	res, err := ioutil.ReadFile("./bot.json")
+	if err != nil {
+		log.Println(err)
+	}
+
+	var bot bot
+
+	err = json.Unmarshal(res, &bot)
+	if err != nil {
+		log.Println(err)
+	}
+
+	return bot
+}
 
 //MessageCreate will be called everytime a new message is sent in a channel the bot has access to
 func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {

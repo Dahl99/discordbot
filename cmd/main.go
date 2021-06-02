@@ -13,7 +13,9 @@ import (
 
 func main() {
 
-	dg, err := discordgo.New("Bot " + authToken) // Initializing discord session
+	bot := discordbot.ReadJsonBotData()
+
+	dg, err := discordgo.New("Bot " + bot.Token) // Initializing discord session
 	if err != nil {
 		log.Println("error creating Discord session,", err)
 		return
@@ -25,7 +27,7 @@ func main() {
 		log.Println("Error opening connection,", err)
 	}
 
-	dg.UpdateGameStatus(1, "+help")
+	dg.UpdateGameStatus(1, bot.Status)
 
 	fmt.Println("Bot is running. Press Ctrl + C to exit.")
 	sc := make(chan os.Signal, 1)
