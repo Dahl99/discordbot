@@ -27,10 +27,6 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		postInsult(cmd, s, m)
 	case prefix + "advice":
 		postAdvice(cmd, s, m)
-	case prefix + "play":
-		if len(cmd) == 2 {
-			playMusic(cmd[1])
-		}
 	default:
 		return
 	}

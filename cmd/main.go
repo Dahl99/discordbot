@@ -25,7 +25,7 @@ func main() {
 		log.Println("Error opening connection,", err)
 	}
 
-	dg.UpdateStatus(1, "+help")
+	dg.UpdateGameStatus(1, "+help")
 
 	fmt.Println("Bot is running. Press Ctrl + C to exit.")
 	sc := make(chan os.Signal, 1)

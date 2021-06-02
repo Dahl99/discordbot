@@ -1,5 +1,5 @@
 module discordbot
 
-go 1.13
+go 1.15
 
-require github.com/bwmarrin/discordgo v0.22.0
+require github.com/bwmarrin/discordgo v0.23.2
