@@ -17,7 +17,7 @@ type bot struct {
 
 // readJsonBotData reads the data the bot needs from the provided JSON file
 func ReadJsonBotData() bot {
-	res, err := ioutil.ReadFile("./bot.json")
+	res, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		log.Println(err)
 	}

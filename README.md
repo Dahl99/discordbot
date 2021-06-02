@@ -57,7 +57,7 @@ In order to run this project you will need the following:
    ```sh
    go get github.com/bwmarrin/discordgo
    ```
-7. Create the json file `bot.json` in the root folder and add the following:
+7. Create the json file `config.json` in the root folder and add the following:
     ```json
     {
       "token":"token goes here",
