@@ -13,6 +13,7 @@ type bot struct {
 	Prefix string
 	Status string
 	Online string
+	Ytkey string
 }
 
 // lock used to ensure Bot object is a singleton

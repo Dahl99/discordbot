@@ -38,3 +38,10 @@ const insultURL string = "https://evilinsult.com/generate_insult.php?lang=en&typ
 
 //String to be sent if Evil Insult API isn't available
 const evilInsultNotAvailable string = "Evil Insult API not available at the moment. Please try again later."
+
+//									youtube.go
+//-----------------------------------------------------------------------------
+
+const youtubeEndpoint string = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&key="
+
+const ytSearchFailed string = "Oof, YouTube search failed!"
