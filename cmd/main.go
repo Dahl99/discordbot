@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	discordbot.Bot = discordbot.ReadConfig()
+	discordbot.Bot = discordbot.GetInstance()
 
 	dg, err := discordgo.New("Bot " + discordbot.Bot.Token) // Initializing discord session
 	if err != nil {

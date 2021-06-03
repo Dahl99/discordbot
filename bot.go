@@ -2,8 +2,10 @@ package discordbot
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"sync"
 )
 
 type bot struct {
@@ -13,23 +15,46 @@ type bot struct {
 	Online string
 }
 
-// Global struct object containing bot config
-var Bot bot
+// lock used to ensure Bot object is a singleton
+var lock = &sync.Mutex{}
 
-// ReadConfig reads the data the bot needs from the provided JSON file
-func ReadConfig() bot {
+// Global struct object containing bot config
+var Bot *bot
+
+// Gets the instance of the bot singleton object
+func GetInstance() *bot {
+	if Bot == nil {
+		lock.Lock()
+		defer lock.Unlock()
+
+		if Bot == nil {
+			fmt.Println("Creating single bot instance now")
+			Bot = &bot{}
+			Bot = readConfig()
+		} else {
+			fmt.Println("Single instance already created!-1")
+		}
+	} else {
+		fmt.Println("Single instance already created!-2")
+	}
+
+	return Bot
+}
+
+// readConfig reads the data the bot needs from the provided JSON file
+func readConfig() *bot {
 	res, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		log.Println(err)
 	}
 
-	var bot bot
+	var temp bot
 
-	err = json.Unmarshal(res, &bot)
+	err = json.Unmarshal(res, &temp)
 	if err != nil {
 		log.Println(err)
 	}
 
-	return bot
+	return &temp
 }
 
