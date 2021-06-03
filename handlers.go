@@ -36,7 +36,7 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case Bot.Prefix + "advice":
 		postAdvice(cmd, s, m)
 	case Bot.Prefix + "music":
-		music(cmd, s, m)
+		music(cmd[1:], s, m)
 	default:
 		return
 	}

@@ -10,9 +10,9 @@ func music(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	switch(cmd[1]) {
+	switch(cmd[0]) {
 	case "play":
-		playMusic(s, m)
+		playMusic(cmd[1:], s, m)
 	case "skip":
 		skipMusic(s, m)
 	default:
@@ -20,7 +20,7 @@ func music(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 }
 
-func playMusic(s *discordgo.Session, m *discordgo.MessageCreate) {
+func playMusic(name []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 	s.ChannelMessageSend(m.ChannelID, "Play music!")
 }
 
