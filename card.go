@@ -41,7 +41,7 @@ func postCard(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 func getCard(n []string) string {
 
 	name := replaceSpace(n[1:]) // Replaces the spaces with "_" to avoid url problems
-	if len(name) <= 2 {
+	if len(name) < 3 {
 		return "Name needs to have 3 or more letters to search"
 	}
 
@@ -62,7 +62,7 @@ func getCard(n []string) string {
 	}
 
 	if card.Image.Png == "" && card.Faces[0].Image.Png == "" && card.Faces[1].Image.Png == "" {
-		return "Unable to find requested card"
+		return "Unable to find requested card, avoid ambigous searches!"
 	}
 
 	res.Body.Close() // Closing body to prevent resource leak
