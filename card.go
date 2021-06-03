@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -32,10 +31,8 @@ type fuzzyResult struct {
 }
 
 func postCard(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
-	if len(cmd) == 1 { // Checks if card name is missing
-		log.Println("Missing card name!")
-		s.ChannelMessageSend(m.ChannelID, m.Author.Mention()+" missing card name!")
-	} else {
+	// Getting card if card name was entered
+	if len(cmd) > 1 {
 		s.ChannelMessageSend(m.ChannelID, getCard(cmd))
 	}
 }
@@ -43,7 +40,7 @@ func postCard(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 //getCard() fetches a card based on which card name used in command
 func getCard(n []string) string {
 
-	name := replaceSpace(removeOrdMatter(n)) // Replaces the spaces with "_" to avoid url problems
+	name := replaceSpace(n[1:]) // Replaces the spaces with "_" to avoid url problems
 	if len(name) <= 2 {
 		return "Name needs to have 3 or more letters to search"
 	}
@@ -55,8 +52,6 @@ func getCard(n []string) string {
 		log.Println(http.StatusServiceUnavailable)
 		return scryfallNotAvailable
 	}
-
-	time.Sleep(200 * time.Millisecond) // Sleeping for 0,2 seconds to prevent spam
 
 	// Decoding results into exactResult
 	var card fuzzyResult
@@ -73,53 +68,48 @@ func getCard(n []string) string {
 	res.Body.Close() // Closing body to prevent resource leak
 
 	//	Making the returned string
-	var retString string
+	var result string
 
 	if card.Prices.Usd != "" || card.Prices.UsdFoil != "" {
-		retString += "\nTCGPlayer price:"
+		result += "\nTCGPlayer price:"
 	}
 
 	if card.Prices.Usd != "" {
-		retString += "\n\tUSD = " + card.Prices.Usd
+		result += "\n\tUSD = " + card.Prices.Usd
 	}
 
 	if card.Prices.UsdFoil != "" {
-		retString += "\n\tUSD Foil = " + card.Prices.UsdFoil
+		result += "\n\tUSD Foil = " + card.Prices.UsdFoil
 	}
 
 	if card.Image.Png != "" {
-		retString += "\n" + card.Image.Png
+		result += "\n" + card.Image.Png
 	} else {
-		retString += "\n" + card.Faces[0].Image.Png + "\n" + card.Faces[1].Image.Png
+		result += "\n" + card.Faces[0].Image.Png + "\n" + card.Faces[1].Image.Png
 	}
 
-	return retString // Returning url to png version of card
+	return result	// Returning url to png version of card
 }
 
 //	This function replaces spaces in a string slice with "_"
 func replaceSpace(s []string) string {
-	var retString string //	String to be returned
+	var result string //	String to be returned
 
 	i := 0
 
-	if len(s) >= 2 { // Checks if name is more than one word
+	if len(s) > 1 { // Checks if name is more than one word
 		for i < len(s) { // Loops through slice and adds index
-			retString += s[i]
+			result += s[i]
 
 			if i != len(s)-1 { // If current index isn't last, "_" is appended
-				retString += "_"
+				result += "_"
 			}
 
 			i++ // Counts up
 		}
 	} else { // If name is 1 word, name is set
-		retString = s[0]
+		result = s[0]
 	}
 
-	return retString // Returns name with "_" instead of spaces or 1 word name
-}
-
-//	Removes an index from a string slice while keeping same order
-func removeOrdMatter(s []string) []string {
-	return append(s[:0], s[1:]...)
+	return result // Returns name with "_" instead of spaces or 1 word name
 }
