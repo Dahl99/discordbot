@@ -62,7 +62,9 @@ In order to run this project you will need the following:
     ```json
     {
       "token":"token goes here",
-      "status":"game status goes here"
+      "prefix":"prefix goes here",
+      "status":"game status goes here",
+      "online":"online message goes here"
     }
     ```
 

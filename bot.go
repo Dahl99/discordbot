@@ -10,7 +10,7 @@ type bot struct {
 	Token string
 	Prefix string
 	Status string
-	Guildjoin string
+	Online string
 }
 
 // Global struct object containing bot config
