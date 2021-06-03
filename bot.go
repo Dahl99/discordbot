@@ -16,8 +16,8 @@ type bot struct {
 // Global struct object containing bot config
 var Bot bot
 
-// readJsonBotData reads the data the bot needs from the provided JSON file
-func ReadJsonBotData() bot {
+// ReadConfig reads the data the bot needs from the provided JSON file
+func ReadConfig() bot {
 	res, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		log.Println(err)
