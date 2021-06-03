@@ -6,11 +6,8 @@ package discordbot
 //Const containing string to be sent if decoding fails
 const decodingFailed string = "Something wrong happened when decoding data"
 
-//								messageCreate.go
+//								  handlers.go
 //-----------------------------------------------------------------------------
-
-//Const containing the prefix needed to use bot commands
-const prefix string = "+"
 
 //Help contains all the commands available
 const help string = "Current commands are:\n\tping\n\tcard <card name>\n\tdice <die sides>\n\tinsult\n\tadvice"

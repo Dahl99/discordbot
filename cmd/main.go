@@ -13,16 +13,22 @@ import (
 
 func main() {
 
-	bot := discordbot.ReadJsonBotData()
+	discordbot.Bot = discordbot.ReadJsonBotData()
 
-	dg, err := discordgo.New("Bot " + bot.Token) // Initializing discord session
+	dg, err := discordgo.New("Bot " + discordbot.Bot.Token) // Initializing discord session
 	if err != nil {
 		log.Println("error creating Discord session,", err)
 		return
 	}
 
+	// Register ready as a callback for the ready events.
+	dg.AddHandler(discordbot.Ready)
+
 	// Register the MessageCreate func as a callback for MessageCreate events.
 	dg.AddHandler(discordbot.MessageCreate)
+
+	// Register guildCreate as a callback for the guildCreate events.
+	dg.AddHandler(discordbot.GuildCreate)
 
 	// Bot needs information about guilds (which includes their channels),
 	// messages and voice states.
@@ -34,9 +40,6 @@ func main() {
 		return
 	}
 
-
-	// Updating game status of bot
-	dg.UpdateGameStatus(1, bot.Status)
 
 	fmt.Println("Bot is running. Press Ctrl + C to exit.")
 	sc := make(chan os.Signal, 1)
