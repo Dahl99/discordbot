@@ -11,6 +11,7 @@ type bot struct {
 	Prefix string
 	Status string
 	Online string
+	Ytkey string
 }
 
 // Global struct object containing bot config
