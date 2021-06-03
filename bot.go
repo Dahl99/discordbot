@@ -29,7 +29,7 @@ func GetInstance() *bot {
 
 		if Bot == nil {
 			fmt.Println("Creating single bot instance now")
-			Bot = &bot{}
+			// Bot = &bot{}
 			Bot = readConfig()
 		} else {
 			fmt.Println("Single instance already created!-1")
