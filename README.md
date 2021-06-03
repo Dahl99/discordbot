@@ -30,6 +30,7 @@ There are many great Discord bots out there, but I wanted to develop my own. I w
 ### Built With
 
 This discord bot is built with:
+* [Go version 1.16.4](https://golang.org/)
 * [DiscordGo](https://github.com/bwmarrin/discordgo)
 
 ## Getting Started
