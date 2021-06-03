@@ -35,6 +35,8 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		postInsult(cmd, s, m)
 	case Bot.Prefix + "advice":
 		postAdvice(cmd, s, m)
+	case Bot.Prefix + "music":
+		music(cmd, s, m)
 	default:
 		return
 	}
