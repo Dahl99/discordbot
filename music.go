@@ -3,6 +3,7 @@ package discordbot
 import (
 	"log"
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -16,6 +17,8 @@ func music(cmd []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.Me
 	switch(cmd[0]) {
 	case "join":
 		joinVoice(v, s, m)
+	case "leave":
+		leaveVoice(v, s, m)
 	case "play":
 		playMusic(cmd[1:], s, m)
 	case "skip":
@@ -57,6 +60,26 @@ func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreat
 	log.Println("New voice instance created")
 	s.ChannelMessageSend(m.ChannelID, "Voice channel joined!")
 }
+
+
+func leaveVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
+	log.Println("INFO: ", m.Author.Username, "requested 'leave'")
+
+	if v == nil {
+		log.Println("INFO: The bot is not in a voice channel!")
+		return
+	}
+
+	v.Stop()
+	time.Sleep(200 * time.Millisecond)
+	v.voice.Disconnect()
+	log.Println("INFO: Voice channel left")
+	mutex.Lock()
+	delete(voiceInstances, v.guildID)
+	mutex.Unlock()
+	dg.ChannelMessageSend(m.ChannelID, "Voice channel left!")
+}
+
 
 func playMusic(n []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 
