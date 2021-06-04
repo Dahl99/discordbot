@@ -45,3 +45,5 @@ const evilInsultNotAvailable string = "Evil Insult API not available at the mome
 const youtubeEndpoint string = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&key="
 
 const ytSearchFailed string = "Oof, YouTube search failed!"
+
+const ytVideoUrl string = "https://www.youtube.com/watch?v="

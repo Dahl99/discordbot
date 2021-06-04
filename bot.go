@@ -2,13 +2,13 @@ package discordbot
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
-	"sync"
+
+	"github.com/bwmarrin/discordgo"
 )
 
-type bot struct {
+type config struct {
 	Token string
 	Prefix string
 	Status string
@@ -16,45 +16,53 @@ type bot struct {
 	Ytkey string
 }
 
-// lock used to ensure Bot object is a singleton
-var lock = &sync.Mutex{}
-
 // Global struct object containing bot config
-var Bot *bot
-
-// Gets the instance of the bot singleton object
-func GetInstance() *bot {
-	if Bot == nil {
-		lock.Lock()
-		defer lock.Unlock()
-
-		if Bot == nil {
-			fmt.Println("Creating single bot instance now")
-			Bot = readConfig()
-		} else {
-			fmt.Println("Single instance already created!-1")
-		}
-	} else {
-		fmt.Println("Single instance already created!-2")
-	}
-
-	return Bot
-}
+var conf config
+var dg *discordgo.Session
 
 // readConfig reads the data the bot needs from the provided JSON file
-func readConfig() *bot {
+func readConfig() {
 	res, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		log.Println(err)
 	}
 
-	var temp bot
-
-	err = json.Unmarshal(res, &temp)
+	err = json.Unmarshal(res, &conf)
 	if err != nil {
 		log.Println(err)
 	}
-
-	return &temp
 }
 
+func Initialize() {
+	readConfig()
+	
+	var err error
+	dg, err = discordgo.New("Bot " + conf.Token) // Initializing discord session
+	if err != nil {
+		log.Println("error creating Discord session,", err)
+		return
+	}
+
+	// Register ready as a callback for the ready events.
+	dg.AddHandler(ReadyHandler)
+
+	// Register the MessageCreate func as a callback for MessageCreate events.
+	dg.AddHandler(MessageCreateHandler)
+
+	// Register guildCreate as a callback for the guildCreate events.
+	// dg.AddHandler(GuildCreateHandler)
+
+	// Bot needs information about guilds (which includes their channels),
+	// messages and voice states.
+	dg.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildMessages | discordgo.IntentsGuildVoiceStates
+
+
+	if err := dg.Open(); err != nil { // Creating a connection
+		log.Println("Error opening connection,", err)
+		return
+	}
+}
+
+func SafeDestroy() {
+	dg.Close()
+}
