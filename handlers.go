@@ -59,10 +59,3 @@ func GuildCreateHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
 		}
 	}
 }
-
-// searchGuild search the guild ID
-func searchGuild(textChannelID string) (guildID string) {
-	channel, _ := dg.Channel(textChannelID)
-	guildID = channel.GuildID
-	return guildID
-}
