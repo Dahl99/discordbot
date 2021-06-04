@@ -46,7 +46,7 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 
 // This function will be called every time a new guild is joined.
-func GuildCreateHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
+func GuildJoinHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
 
 	if event.Guild.Unavailable {
 		return

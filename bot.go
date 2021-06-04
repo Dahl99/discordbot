@@ -35,7 +35,7 @@ func readConfig() {
 
 func Initialize() {
 	readConfig()
-	
+
 	var err error
 	dg, err = discordgo.New("Bot " + conf.Token) // Initializing discord session
 	if err != nil {
@@ -50,7 +50,7 @@ func Initialize() {
 	dg.AddHandler(MessageCreateHandler)
 
 	// Register guildCreate as a callback for the guildCreate events.
-	// dg.AddHandler(GuildCreateHandler)
+	dg.AddHandler(GuildJoinHandler)
 
 	// Bot needs information about guilds (which includes their channels),
 	// messages and voice states.
