@@ -87,7 +87,7 @@ func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreat
 	}
 
 	var err error
-	v.voice, err = dg.ChannelVoiceJoin(v.guildID, voiceChannelID, false, false)
+	v.voice, err = dg.ChannelVoiceJoin(v.guildID, voiceChannelID, false, true)
 	if err != nil {
 		v.Stop()
 		log.Println("Error when joining voice channel")
