@@ -1,7 +1,6 @@
 package discordbot
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -13,8 +12,6 @@ func music(cmd []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.Me
 	if len(cmd) < 1 {
 		return
 	}
-
-	fmt.Println(cmd)
 
 	switch(cmd[0]) {
 	case "join":
