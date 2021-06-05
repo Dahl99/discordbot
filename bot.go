@@ -40,7 +40,7 @@ func Initialize() {
 	var err error
 	dg, err = discordgo.New("Bot " + conf.Token) // Initializing discord session
 	if err != nil {
-		log.Println("error creating Discord session,", err)
+		log.Println("ERROR: error creating Discord session,", err)
 		return
 	}
 

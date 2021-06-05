@@ -3,7 +3,6 @@ package discordbot
 import (
 	"io"
 	"log"
-	"os/exec"
 	"sync"
 
 	"github.com/bwmarrin/discordgo"
@@ -15,14 +14,11 @@ type VoiceInstance struct {
 	session    *discordgo.Session
 	encoder    *dca.EncodeSession
 	stream     *dca.StreamingSession
-	run        *exec.Cmd
 	queueMutex sync.Mutex
 	audioMutex sync.Mutex
 	nowPlaying Song
 	queue      []Song
-	recv       []int16
 	guildID    string
-	channelID  string
 	speaking   bool
 	pause      bool
 	stop       bool
@@ -131,21 +127,13 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 		defer v.audioMutex.Unlock()
 		for {
 			if len(v.queue) == 0 {
-				// ChMessageSend(v.nowPlaying.ChannelID, "[**Music**] End of queue!")
 				log.Println("INFO: End of queue")
 				return
 			}
 			v.nowPlaying = v.QueueGetSong()
-			// go ChMessageSend(v.nowPlaying.ChannelID, "[**Music**] Playing, **`"+
-			// 	v.nowPlaying.Title+"`  -  `("+v.nowPlaying.Duration+")`  -  **<@"+v.nowPlaying.ID+">\n") //*`"+ v.nowPlaying.User +"`***")
-
 
 			go log.Println("Playing next song")
 
-			// If monoserver
-			// if o.DiscordPlayStatus {
-			// 	dg.UpdateStatus(0, v.nowPlaying.Title)
-			// }
 			v.stop = false
 			v.skip = false
 			v.speaking = true
