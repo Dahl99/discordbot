@@ -31,7 +31,6 @@ type videoResponse struct {
 	Formats []struct {
 		Url string `json:"url"`
 	} `json:"formats"`
-	Title string `json:"title"`
 }
 
 func ytSearch(name string, v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) (song_struct PkgSong, err error) {
@@ -63,14 +62,8 @@ func ytSearch(name string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		return
 	}
 
-	outputString := out.String()
-
 	var videoRes videoResponse
-	err = json.Unmarshal([]byte(outputString), &videoRes)
-	if err != nil {
-		log.Println("ERROR: error occured when decoding video")
-		return
-	}
+	err = json.NewDecoder(&out).Decode(&videoRes)
 
 	guildID := searchGuild(m.ChannelID)
 	member, _ := v.session.GuildMember(guildID, m.Author.ID)
@@ -88,7 +81,7 @@ func ytSearch(name string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		m.Author.ID,
 		videoID,
 		videoTitle,
-		videoRes.Formats[1].Url,
+		videoRes.Formats[0].Url,
 	}
 
 	song_struct.data = song
