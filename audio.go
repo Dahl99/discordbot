@@ -1,6 +1,8 @@
 package discordbot
 
 import (
+	"io"
+	"log"
 	"os/exec"
 	"sync"
 
@@ -34,13 +36,18 @@ type Song struct {
 	ID        string
 	VidID     string
 	Title     string
-	Duration  string
 	VideoURL  string
+}
+
+type PkgSong struct {
+	data Song
+	v    *VoiceInstance
 }
 
 var (
 	voiceInstances = map[string]*VoiceInstance{}
 	mutex sync.Mutex
+	songSignal chan PkgSong
 )
 
 // Stop stops the audio
@@ -49,4 +56,112 @@ func (v *VoiceInstance) Stop() {
 	if v.encoder != nil {
 		v.encoder.Cleanup()
 	}
+}
+
+// QueueAdd
+func (v *VoiceInstance) QueueAdd(song Song) {
+	v.queueMutex.Lock()
+	defer v.queueMutex.Unlock()
+	v.queue = append(v.queue, song)
+}
+
+// QueueGetSong
+func (v *VoiceInstance) QueueGetSong() (song Song) {
+	v.queueMutex.Lock()
+	defer v.queueMutex.Unlock()
+	if len(v.queue) != 0 {
+		return v.queue[0]
+	}
+	return
+}
+
+// QueueRemoveFirst
+func (v *VoiceInstance) QueueRemoveFirst() {
+	v.queueMutex.Lock()
+	defer v.queueMutex.Unlock()
+	if len(v.queue) != 0 {
+		v.queue = v.queue[1:]
+	}
+}
+
+// QueueRemove
+func (v *VoiceInstance) QueueRemove() {
+	v.queueMutex.Lock()
+	defer v.queueMutex.Unlock()
+	v.queue = []Song{}
+}
+
+// DCA
+func (v *VoiceInstance) DCA(url string) {
+	opts := dca.StdEncodeOptions
+	opts.RawOutput = true
+	opts.Bitrate = 96
+	opts.Application = "lowdelay"
+
+	encodeSession, err := dca.EncodeFile(url, opts)
+	if err != nil {
+		log.Println("FATA: Failed creating an encoding session: ", err)
+	}
+	v.encoder = encodeSession
+	done := make(chan error)
+	stream := dca.NewStream(encodeSession, v.voice, done)
+	v.stream = stream
+	for {
+		select {
+		case err := <-done:
+			if err != nil && err != io.EOF {
+				log.Println("FATA: An error occured", err)
+			}
+			// Clean up incase something happened and ffmpeg is still running
+			encodeSession.Cleanup()
+			return
+		}
+	}
+}
+
+func (v *VoiceInstance) PlayQueue(song Song) {
+	// add song to queue
+	v.QueueAdd(song)
+	if v.speaking {
+		// the bot is playing
+		return
+	}
+	go func() {
+		v.audioMutex.Lock()
+		defer v.audioMutex.Unlock()
+		for {
+			if len(v.queue) == 0 {
+				// ChMessageSend(v.nowPlaying.ChannelID, "[**Music**] End of queue!")
+				log.Println("INFO: End of queue")
+				return
+			}
+			v.nowPlaying = v.QueueGetSong()
+			// go ChMessageSend(v.nowPlaying.ChannelID, "[**Music**] Playing, **`"+
+			// 	v.nowPlaying.Title+"`  -  `("+v.nowPlaying.Duration+")`  -  **<@"+v.nowPlaying.ID+">\n") //*`"+ v.nowPlaying.User +"`***")
+
+
+			go log.Println("Playing next song")
+
+			// If monoserver
+			// if o.DiscordPlayStatus {
+			// 	dg.UpdateStatus(0, v.nowPlaying.Title)
+			// }
+			v.stop = false
+			v.skip = false
+			v.speaking = true
+			v.pause = false
+			v.voice.Speaking(true)
+
+			v.DCA(v.nowPlaying.VideoURL)
+
+			v.QueueRemoveFirst()
+			if v.stop {
+				v.QueueRemove()
+			}
+			v.stop = false
+			v.skip = false
+			v.speaking = false
+			v.voice.Speaking(false)
+		}
+	}()
 }

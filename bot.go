@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -50,7 +51,7 @@ func Initialize() {
 	dg.AddHandler(MessageCreateHandler)
 
 	// Register guildCreate as a callback for the guildCreate events.
-	dg.AddHandler(GuildJoinHandler)
+	// dg.AddHandler(GuildJoinHandler)
 
 	// Bot needs information about guilds (which includes their channels),
 	// messages and voice states.
@@ -60,6 +61,42 @@ func Initialize() {
 	if err := dg.Open(); err != nil { // Creating a connection
 		log.Println("Error opening connection,", err)
 		return
+	}
+
+	// purgeRoutine()
+	initializeRoutine()
+}
+
+// func purgeRoutine() {
+// 	go func() {
+// 		for {
+// 			for k, v := range purgeQueue {
+// 				if time.Now().Unix()-o.DiscordPurgeTime > v.TimeSent {
+// 					purgeQueue = append(purgeQueue[:k], purgeQueue[k+1:]...)
+// 					dg.ChannelMessageDelete(v.ChannelID, v.ID)
+// 					break
+// 				}
+// 			}
+// 			time.Sleep(1 * time.Second)
+// 		}
+// 	}()
+// }
+
+func initializeRoutine() {
+	songSignal = make(chan PkgSong)
+	go GlobalPlay(songSignal)
+}
+
+func GlobalPlay(songSig chan PkgSong) {
+	for {
+		select {
+		case song := <-songSig:
+			if song.v.radioFlag {
+				song.v.Stop()
+				time.Sleep(200 * time.Millisecond)
+			}
+			go song.v.PlayQueue(song.data)
+		}
 	}
 }
 
