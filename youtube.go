@@ -64,6 +64,10 @@ func ytSearch(name string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 
 	var videoRes videoResponse
 	err = json.NewDecoder(&out).Decode(&videoRes)
+	if err != nil {
+		log.Println("ERROR: error occured when decoding video response")
+		return
+	}
 
 	guildID := searchGuild(m.ChannelID)
 	member, _ := v.session.GuildMember(guildID, m.Author.ID)
