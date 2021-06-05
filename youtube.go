@@ -108,8 +108,7 @@ func ytSearch(name string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 
 	fmt.Println("Formats length = ", len(vid.Formats))
 
-	// format := vid.Formats[0]
-	format := vid.Formats.
+	format := vid.Formats[0]
 	videoURL, err := ytdlclient.GetStreamURL(vid, &format)
 	if err != nil {
 		return
