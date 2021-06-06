@@ -14,6 +14,22 @@ func ReadyHandler(s *discordgo.Session, event *discordgo.Ready) {
 }
 
 
+// This function will be called every time a new guild is joined.
+func GuildJoinHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
+
+	if event.Guild.Unavailable {
+		return
+	}
+
+	for _, channel := range event.Guild.Channels {
+		if channel.ID == event.Guild.ID {
+			_, _ = s.ChannelMessageSend(channel.ID, conf.Online)
+			return
+		}
+	}
+}
+
+
 //MessageCreate will be called everytime a new message is sent in a channel the bot has access to
 func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID { // Preventing bot from using own commands
@@ -41,21 +57,5 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		music(cmd[1:], v, s, m)
 	default:
 		return
-	}
-}
-
-
-// This function will be called every time a new guild is joined.
-func GuildJoinHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
-
-	if event.Guild.Unavailable {
-		return
-	}
-
-	for _, channel := range event.Guild.Channels {
-		if channel.ID == event.Guild.ID {
-			_, _ = s.ChannelMessageSend(channel.ID, conf.Online)
-			return
-		}
 	}
 }

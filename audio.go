@@ -23,7 +23,6 @@ type VoiceInstance struct {
 	pause      bool
 	stop       bool
 	skip       bool
-	radioFlag  bool
 }
 
 type Song struct {
@@ -45,6 +44,15 @@ var (
 	mutex sync.Mutex
 	songSignal chan PkgSong
 )
+
+func GlobalPlay(songSig chan PkgSong) {
+	for {
+		select {
+		case song := <-songSig:
+			go song.v.PlayQueue(song.data)
+		}
+	}
+}
 
 func (v *VoiceInstance) Skip() bool {
 	if v.speaking {
@@ -144,8 +152,7 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 				return
 			}
 			v.nowPlaying = v.QueueGetSong()
-
-			go log.Println("Playing next song")
+			go dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] Now playing: " + v.nowPlaying.Title)
 
 			v.stop = false
 			v.skip = false
@@ -159,6 +166,7 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 			if v.stop {
 				v.QueueRemove()
 			}
+			
 			v.stop = false
 			v.skip = false
 			v.speaking = false
