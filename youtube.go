@@ -49,6 +49,10 @@ func ytSearch(name string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		return
 	}
 
+	if len(page.Items) < 1 {
+		log.Println("INFO: empty search result")
+		return
+	}
 	videoID := page.Items[0].Id.VideoId
 	videoTitle := page.Items[0].Snippet.Title
 
