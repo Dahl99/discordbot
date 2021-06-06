@@ -33,7 +33,7 @@ type videoResponse struct {
 	} `json:"formats"`
 }
 
-func ytSearch(name string, v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) (song_struct PkgSong, err error) {
+func ytSearch(name string, v *VoiceInstance, m *discordgo.MessageCreate) (song_struct PkgSong, err error) {
 
 	res, err := http.Get(youtubeEndpoint + conf.Ytkey + "&q=" + name)
 	if err != nil {

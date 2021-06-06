@@ -46,6 +46,19 @@ var (
 	songSignal chan PkgSong
 )
 
+func (v *VoiceInstance) Skip() bool {
+	if v.speaking {
+		if v.pause {
+			return true
+		} else {
+			if v.encoder != nil {
+				v.encoder.Cleanup()
+			}
+		}
+	}
+	return false
+}
+
 // Stop stops the audio
 func (v *VoiceInstance) Stop() {
 	v.stop = true

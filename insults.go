@@ -13,9 +13,9 @@ type insult struct {
 	Insult string `json:"insult"`
 }
 
-func postInsult(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
+func postInsult(cmd []string, m *discordgo.MessageCreate) {
 	if len(cmd) == 1 { // Checks if insult command was used properly
-		s.ChannelMessageSend(m.ChannelID, getInsult())
+		dg.ChannelMessageSend(m.ChannelID, getInsult())
 	}
 }
 

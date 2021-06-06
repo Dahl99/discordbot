@@ -26,17 +26,17 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	switch cmd[0] {
 	case conf.Prefix + "help":
-		s.ChannelMessageSend(m.ChannelID, help)
+		dg.ChannelMessageSend(m.ChannelID, help)
 	case conf.Prefix + "ping":
-		s.ChannelMessageSend(m.ChannelID, "Pong!")
+		dg.ChannelMessageSend(m.ChannelID, "Pong!")
 	case conf.Prefix + "card":
-		postCard(cmd, s, m)
+		postCard(cmd, m)
 	case conf.Prefix + "dice":
-		rollDice(cmd, s, m)
+		rollDice(cmd, m)
 	case conf.Prefix + "insult":
-		postInsult(cmd, s, m)
+		postInsult(cmd, m)
 	case conf.Prefix + "advice":
-		postAdvice(cmd, s, m)
+		postAdvice(cmd, m)
 	case conf.Prefix + "music":
 		music(cmd[1:], v, s, m)
 	default:

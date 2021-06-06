@@ -30,10 +30,10 @@ type fuzzyResult struct {
 	Faces  [2]cardFaces `json:"card_faces"`
 }
 
-func postCard(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
+func postCard(cmd []string, m *discordgo.MessageCreate) {
 	// Getting card if card name was entered
 	if len(cmd) > 1 {
-		s.ChannelMessageSend(m.ChannelID, getCard(cmd))
+		dg.ChannelMessageSend(m.ChannelID, getCard(cmd))
 	}
 }
 

@@ -17,11 +17,11 @@ func music(cmd []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.Me
 	case "join":
 		joinVoice(v, s, m)
 	case "leave":
-		leaveVoice(v, s, m)
+		leaveVoice(v, m)
 	case "play":
-		playMusic(cmd[1:], v, s, m)
+		playMusic(cmd[1:], v, m)
 	case "skip":
-		skipMusic(s, m)
+		skipMusic(v, m)
 	default:
 		return
 	}
@@ -31,7 +31,7 @@ func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreat
 	voiceChannelID := searchVoiceChannel(m.Author.ID)
 	if voiceChannelID == "" {
 		log.Println("Voice channel id not found")
-		s.ChannelMessageSend(m.ChannelID, "[Music] You need to join a voice channel first!")
+		dg.ChannelMessageSend(m.ChannelID, "[Music] You need to join a voice channel first!")
 		return
 	}
 
@@ -57,11 +57,11 @@ func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreat
 
 	v.voice.Speaking(false)
 	log.Println("New voice instance created")
-	s.ChannelMessageSend(m.ChannelID, "[Music] Voice channel joined!")
+	dg.ChannelMessageSend(m.ChannelID, "[Music] Voice channel joined!")
 }
 
 
-func leaveVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
+func leaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
 	log.Println("INFO: ", m.Author.Username, "requested 'leave'")
 
 	if v == nil {
@@ -80,7 +80,7 @@ func leaveVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCrea
 }
 
 
-func playMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
+func playMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 
 	// fmt.Println("n = ", n)
 
@@ -92,54 +92,40 @@ func playMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 
 	voiceChannelID := searchVoiceChannel(m.Author.ID)
 	if v.voice.ChannelID != voiceChannelID {
-		s.ChannelMessageSend(m.ChannelID, "[Music] <@" + m.Author.ID + "> you need to join my voice channel first!")
+		dg.ChannelMessageSend(m.ChannelID, "[Music] <@" + m.Author.ID + "> you need to join my voice channel first!")
 		return
 	}
 
 	name := replaceSpace(n)
 	// url := youtubeEndpoint + conf.Ytkey + "&q=" + name
 
-	song, err := ytSearch(name, v, s, m)
+	song, err := ytSearch(name, v, m)
 	if err != nil || song.data.ID == "" {
 		log.Println("ERROR: Youtube search: ", err)
-		s.ChannelMessageSend(m.ChannelID, "[Music] Unable to find song")
+		dg.ChannelMessageSend(m.ChannelID, "[Music] Unable to find song")
 		return
 	}
 
-	s.ChannelMessageSend(m.ChannelID, "[Music] " + song.data.User + " has added " + song.data.Title + " to the queue")
+	dg.ChannelMessageSend(m.ChannelID, "[Music] " + song.data.User + " has added " + song.data.Title + " to the queue")
 
 	go func() {
 		songSignal <- song
 	}()
-
-
-	// if result[0] == ytSearchFailed || result[0] == decodingFailed {
-	// 	log.Println("ERROR: Something wrong happened when getting song")
-	// 	s.ChannelMessageSend(m.ChannelID, "[Music] Something wrong happened when getting song")
-	// 	return
-	// }
-
-
-
-	// vid, err := v2.GetVideoInfo(ytVideoUrl + result[0])
-	// if err != nil {
-	// 	return
-	// }
-
-	// client := youtube.Client{}
-	// video, err := client.GetVideo(result[0])
-	// if err != nil {
-	// 	return
-	// }
-
-	// go func () {
-	// 	songSignal <- video
-	// }()
-
-
-	// s.ChannelMessageSend(m.ChannelID, result[0] + "\t" + result[1])
 }
 
-func skipMusic(s *discordgo.Session, m *discordgo.MessageCreate) {
-	s.ChannelMessageSend(m.ChannelID, "Skip music!")
+func skipMusic(v *VoiceInstance, m *discordgo.MessageCreate) {
+	log.Println("INFO:", m.Author.Username, "send 'skip'")
+	if v == nil {
+		log.Println("INFO: The bot is not in a voice channel")
+		dg.ChannelMessageSend(m.ChannelID, "[Music] I need to join a voice channel first!")
+		return
+	}
+	if len(v.queue) == 0 {
+		log.Println("INFO: The queue is empty.")
+		dg.ChannelMessageSend(m.ChannelID, "[Music] There is no song playing")
+		return
+	}
+	if v.Skip() {
+		dg.ChannelMessageSend(m.ChannelID, "[Music] I'm paused, resume first")
+	}
 }
