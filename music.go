@@ -94,8 +94,15 @@ func playMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 	}
 
 	name := replaceSpace(n)
+	videoId, videoTitle, err := ytSearch(name)
+	if err != nil {
+		log.Println("INFO: Unable to find song by searching youtube")
+		dg.ChannelMessageSend(m.ChannelID, "[Music] Oops, something wrong happened when searching YouTube")
+		return
+	}
 
-	song, err := ytSearch(name, v, m)
+	song, err := execYtdl(videoId, videoTitle, v, m)
+
 	if err != nil || song.data.ID == "" {
 		log.Println("ERROR: Youtube search: ", err)
 		dg.ChannelMessageSend(m.ChannelID, "[Music] Unable to find song")

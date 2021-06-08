@@ -3,6 +3,7 @@ package discordbot
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"os/exec"
@@ -33,12 +34,13 @@ type videoResponse struct {
 	} `json:"formats"`
 }
 
-func ytSearch(name string, v *VoiceInstance, m *discordgo.MessageCreate) (song_struct PkgSong, err error) {
+
+func ytSearch(name string) (string, string, error) {
 
 	res, err := http.Get(youtubeEndpoint + conf.Ytkey + "&q=" + name)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
-		return
+		return "", "", err
 	}
 
 	var page ytPage
@@ -46,17 +48,26 @@ func ytSearch(name string, v *VoiceInstance, m *discordgo.MessageCreate) (song_s
 	err = json.NewDecoder(res.Body).Decode(&page)
 	if err != nil {
 		log.Println(err)
-		return
+		return "", "", err
 	}
+
+	res.Body.Close()
 
 	if len(page.Items) < 1 {
 		log.Println("INFO: empty search result")
-		return
+		err = errors.New("empty search result")
+		return "", "", err
 	}
-	videoID := page.Items[0].Id.VideoId
+	videoId := page.Items[0].Id.VideoId
 	videoTitle := page.Items[0].Snippet.Title
 
-	cmd := exec.Command("youtube-dl", "--skip-download", "--print-json", "--flat-playlist", videoID)
+	return videoId, videoTitle, nil
+}
+
+
+func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.MessageCreate) (song_struct PkgSong, err error) {
+
+	cmd := exec.Command("youtube-dl", "--skip-download", "--print-json", "--flat-playlist", videoId)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 
@@ -87,15 +98,14 @@ func ytSearch(name string, v *VoiceInstance, m *discordgo.MessageCreate) (song_s
 		m.ChannelID,
 		userName,
 		m.Author.ID,
-		videoID,
+		videoId,
 		videoTitle,
 		videoRes.Formats[0].Url,
 	}
 
+	// var song_struct PkgSong
 	song_struct.data = song
 	song_struct.v = v
-
-	res.Body.Close()
 
 	return song_struct, nil
 }
