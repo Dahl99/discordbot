@@ -22,6 +22,8 @@ func music(cmd []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.Me
 		playMusic(cmd[1:], v, m)
 	case "skip":
 		skipMusic(v, m)
+	case "stop":
+		stopMusic(v, m)
 	default:
 		return
 	}
@@ -131,4 +133,24 @@ func skipMusic(v *VoiceInstance, m *discordgo.MessageCreate) {
 	if v.Skip() {
 		dg.ChannelMessageSend(m.ChannelID, "[Music] I'm paused, resume first")
 	}
+}
+
+
+func stopMusic(v *VoiceInstance, m *discordgo.MessageCreate) {
+	log.Println("INFO:", m.Author.Username, "requested stopping of music")
+
+	if v == nil {
+		log.Println("INFO: The bot is not in a voice channel")
+		dg.ChannelMessageSend(m.ChannelID, "[Music] I need to join a voice channel first!")
+		return
+	}
+	voiceChannelID := searchVoiceChannel(m.Author.ID)
+	if v.voice.ChannelID != voiceChannelID {
+		dg.ChannelMessageSend(m.ChannelID, "[Music] <@"+m.Author.ID+"> You need to join my voice channel to stop music!")
+		return
+	}
+
+	v.Stop()
+	log.Println("INFO: The bot stopped playing music")
+	dg.ChannelMessageSend(m.ChannelID, "[Music] I have now stopped playing music!")
 }
