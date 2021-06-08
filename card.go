@@ -2,7 +2,6 @@ package discordbot
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -43,7 +42,6 @@ func getCard(n []string) string {
 
 	name := replaceSpace(n[1:]) // Replacing the spaces with "_" to avoid url problems
 
-	fmt.Println("Name: ", name)
 	if len(name) < 3 {
 		return "Name needs to have 3 or more letters to search"
 	}
