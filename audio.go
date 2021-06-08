@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/jonas747/dca"
+	"github.com/jung-m/dca"
 )
 
 type VoiceInstance struct {
