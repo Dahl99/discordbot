@@ -43,6 +43,8 @@ To get a local copy up and running follow these simple example steps.
 In order to run this project you will need the following:
 
 * Go 1.16.5 installed
+* youtube-dl installed
+* ffmpeg installed
 * Discord account
 * Google developer account
 
