@@ -45,7 +45,7 @@ func Initialize() {
 
 	// Register handlers as callbacks for the events.
 	dg.AddHandler(ReadyHandler)
-	// dg.AddHandler(GuildCreateHandler)
+	dg.AddHandler(GuildCreateHandler)
 	dg.AddHandler(MessageCreateHandler)
 
 	if err := dg.Open(); err != nil { // Creating a connection

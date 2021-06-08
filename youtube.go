@@ -11,11 +11,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-type ytPage struct {
-	Items []items `json:"items"`
+// Structs for doing a youtube search
+type ytPageSearch struct {
+	Items []itemsSearch `json:"items"`
 }
 
-type items struct {
+type itemsSearch struct {
 	Id id `json:"id"`
 	Snippet snippet `json:"snippet"`
 }
@@ -34,16 +35,25 @@ type videoResponse struct {
 	} `json:"formats"`
 }
 
+// Structs for finding a video on youtube
+type ytPageFind struct {
+	Items []itemsFind `json:"items"`
+}
+
+type itemsFind struct {
+	Snippet snippet `json:"snippet"`
+}
+
 
 func ytSearch(name string) (string, string, error) {
 
-	res, err := http.Get(youtubeEndpoint + conf.Ytkey + "&q=" + name)
+	res, err := http.Get(youtubeSearchEndpoint + conf.Ytkey + "&q=" + name)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
 		return "", "", err
 	}
 
-	var page ytPage
+	var page ytPageSearch
 
 	err = json.NewDecoder(res.Body).Decode(&page)
 	if err != nil {
@@ -54,14 +64,43 @@ func ytSearch(name string) (string, string, error) {
 	res.Body.Close()
 
 	if len(page.Items) < 1 {
-		log.Println("INFO: empty search result")
-		err = errors.New("empty search result")
+		log.Println("INFO: empty youtube search result")
+		err = errors.New("empty youtube search result")
 		return "", "", err
 	}
 	videoId := page.Items[0].Id.VideoId
 	videoTitle := page.Items[0].Snippet.Title
 
 	return videoId, videoTitle, nil
+}
+
+
+func ytFind(videoId string) (string, error) {
+	res, err := http.Get(youtubeFindEndpoint + conf.Ytkey + "&id=" + videoId)
+	if err != nil {
+		log.Println(http.StatusServiceUnavailable)
+		return "", err
+	}
+
+	var page ytPageFind
+
+	err = json.NewDecoder(res.Body).Decode(&page)
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	res.Body.Close()
+
+	if len(page.Items) < 1 {
+		log.Println("INFO: empty youtube search result")
+		err = errors.New("empty youtube search result")
+		return "", err
+	}
+
+	videoTitle := page.Items[0].Snippet.Title
+
+	return videoTitle, nil
 }
 
 

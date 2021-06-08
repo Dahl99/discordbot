@@ -2,6 +2,7 @@ package discordbot
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -95,12 +96,25 @@ func playMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 		return
 	}
 
-	name := replaceSpace(n)
-	videoId, videoTitle, err := ytSearch(name)
-	if err != nil {
-		log.Println("INFO: Unable to find song by searching youtube")
-		dg.ChannelMessageSend(m.ChannelID, "[Music] Oops, something wrong happened when searching YouTube")
-		return
+	var videoId string
+	var videoTitle string
+	var err error
+
+	if strings.Contains(n[0], ytVideoUrl) {
+		videoId = strings.Split(n[0], "?v=")[1]
+		videoTitle, err = ytFind(videoId)
+		if err != nil {
+			log.Println("INFO: unable to find title of song on youtube")
+			dg.ChannelMessageSend(m.ChannelID, "[Music] Oops, something went wrong when fetching title on YouTube")
+		}
+	} else {
+		name := replaceSpace(n)
+		videoId, videoTitle, err = ytSearch(name)
+		if err != nil {
+			log.Println("INFO: Unable to find song by searching youtube")
+			dg.ChannelMessageSend(m.ChannelID, "[Music] Oops, something wrong happened when searching YouTube")
+			return
+		}
 	}
 
 	song, err := execYtdl(videoId, videoTitle, v, m)
@@ -111,7 +125,7 @@ func playMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 		return
 	}
 
-	dg.ChannelMessageSend(m.ChannelID, "[Music] " + song.data.User + " has added " + song.data.Title + " to the queue")
+	dg.ChannelMessageSend(m.ChannelID, "[Music] " + song.data.User + " has added **" + song.data.Title + "** to the queue")
 
 	go func() {
 		songSignal <- song

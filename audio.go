@@ -151,7 +151,7 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 				return
 			}
 			v.nowPlaying = v.QueueGetSong()
-			go dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] Now playing: " + v.nowPlaying.Title)
+			go dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] Now playing: **" + v.nowPlaying.Title + "**")
 
 			v.stop = false
 			v.skip = false
