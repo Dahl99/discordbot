@@ -2,6 +2,7 @@ package discordbot
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -40,7 +41,9 @@ func postCard(cmd []string, m *discordgo.MessageCreate) {
 //getCard() fetches a card based on which card name used in command
 func getCard(n []string) string {
 
-	name := replaceSpace(n[1:]) // Replaces the spaces with "_" to avoid url problems
+	name := replaceSpace(n[1:]) // Replacing the spaces with "_" to avoid url problems
+
+	fmt.Println("Name: ", name)
 	if len(name) < 3 {
 		return "Name needs to have 3 or more letters to search"
 	}
@@ -53,7 +56,7 @@ func getCard(n []string) string {
 		return scryfallNotAvailable
 	}
 
-	// Decoding results into exactResult
+	// Decoding fuzzyresult from get request
 	var card fuzzyResult
 	err = json.NewDecoder(res.Body).Decode(&card)
 	if err != nil {
@@ -61,11 +64,11 @@ func getCard(n []string) string {
 		return decodingFailed
 	}
 
+	res.Body.Close() // Closing body to prevent resource leak
+
 	if card.Image.Png == "" && card.Faces[0].Image.Png == "" && card.Faces[1].Image.Png == "" {
 		return "Unable to find requested card, avoid ambigous searches!"
 	}
-
-	res.Body.Close() // Closing body to prevent resource leak
 
 	//	Making the returned string
 	var result string
@@ -91,25 +94,3 @@ func getCard(n []string) string {
 	return result	// Returning url to png version of card
 }
 
-//	This function replaces spaces in a string slice with "_"
-func replaceSpace(s []string) string {
-	var result string //	String to be returned
-
-	i := 0
-
-	if len(s) > 1 { // Checks if name is more than one word
-		for i < len(s) { // Loops through slice and adds index
-			result += s[i]
-
-			if i != len(s)-1 { // If current index isn't last, "_" is appended
-				result += "_"
-			}
-
-			i++ // Counts up
-		}
-	} else { // If name is 1 word, name is set
-		result = s[0]
-	}
-
-	return result // Returns name with "_" instead of spaces or 1 word name
-}

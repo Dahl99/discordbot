@@ -15,7 +15,7 @@ func ReadyHandler(s *discordgo.Session, event *discordgo.Ready) {
 
 
 // This function will be called every time a new guild is joined.
-func GuildJoinHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
+func GuildCreateHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
 
 	if event.Guild.Unavailable {
 		return

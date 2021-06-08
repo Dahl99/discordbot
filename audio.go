@@ -15,7 +15,6 @@ type VoiceInstance struct {
 	encoder    *dca.EncodeSession
 	stream     *dca.StreamingSession
 	queueMutex sync.Mutex
-	audioMutex sync.Mutex
 	nowPlaying Song
 	queue      []Song
 	guildID    string
@@ -112,7 +111,7 @@ func (v *VoiceInstance) QueueRemove() {
 func (v *VoiceInstance) DCA(url string) {
 	opts := dca.StdEncodeOptions
 	opts.RawOutput = true
-	opts.Bitrate = 96
+	opts.Bitrate = 64
 	opts.Application = "lowdelay"
 
 	encodeSession, err := dca.EncodeFile(url, opts)
@@ -121,8 +120,7 @@ func (v *VoiceInstance) DCA(url string) {
 	}
 	v.encoder = encodeSession
 	done := make(chan error)
-	stream := dca.NewStream(encodeSession, v.voice, done)
-	v.stream = stream
+	v.stream = dca.NewStream(encodeSession, v.voice, done)
 	for {
 		select {
 		case err := <-done:
@@ -139,16 +137,17 @@ func (v *VoiceInstance) DCA(url string) {
 func (v *VoiceInstance) PlayQueue(song Song) {
 	// add song to queue
 	v.QueueAdd(song)
+	
 	if v.speaking {
 		// the bot is playing
 		return
 	}
+
 	go func() {
-		v.audioMutex.Lock()
-		defer v.audioMutex.Unlock()
 		for {
 			if len(v.queue) == 0 {
 				log.Println("INFO: End of queue")
+				dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] End of queue")
 				return
 			}
 			v.nowPlaying = v.QueueGetSong()

@@ -81,9 +81,6 @@ func leaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
 
 
 func playMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
-
-	// fmt.Println("n = ", n)
-
 	if v == nil {
 		log.Println("INFO: The bot is not in a voice channel")
 		dg.ChannelMessageSend(m.ChannelID, "[Music] I need to join a voice channel first!")
@@ -97,7 +94,6 @@ func playMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 	}
 
 	name := replaceSpace(n)
-	// url := youtubeEndpoint + conf.Ytkey + "&q=" + name
 
 	song, err := ytSearch(name, v, m)
 	if err != nil || song.data.ID == "" {

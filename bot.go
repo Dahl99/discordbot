@@ -45,13 +45,8 @@ func Initialize() {
 
 	// Register handlers as callbacks for the events.
 	dg.AddHandler(ReadyHandler)
-	// dg.AddHandler(GuildJoinHandler)
+	dg.AddHandler(GuildCreateHandler)
 	dg.AddHandler(MessageCreateHandler)
-
-	// Bot needs information about guilds (which includes their channels),
-	// messages and voice states.
-	// dg.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildMessages | discordgo.IntentsGuildVoiceStates
-
 
 	if err := dg.Open(); err != nil { // Creating a connection
 		log.Println("Error opening connection,", err)

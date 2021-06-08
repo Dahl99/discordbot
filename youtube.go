@@ -97,5 +97,5 @@ func ytSearch(name string, v *VoiceInstance, m *discordgo.MessageCreate) (song_s
 
 	res.Body.Close()
 
-	return
+	return song_struct, nil
 }
