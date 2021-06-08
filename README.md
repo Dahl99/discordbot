@@ -30,8 +30,9 @@ There are many great Discord bots out there, but I wanted to develop my own. I w
 ### Built With
 
 This discord bot is built with:
-* [Go version 1.16.4](https://golang.org/)
+* [Go version 1.16.5](https://golang.org/)
 * [DiscordGo](https://github.com/bwmarrin/discordgo)
+* [dca](https://github.com/jonas747/dca)
 
 ## Getting Started
 
@@ -41,8 +42,9 @@ To get a local copy up and running follow these simple example steps.
 
 In order to run this project you will need the following:
 
-* Go
+* Go 1.16.5 installed
 * Discord account
+* Google developer account
 
 ### Installation
 
@@ -64,7 +66,8 @@ In order to run this project you will need the following:
       "token":"token goes here",
       "prefix":"prefix goes here",
       "status":"game status goes here",
-      "online":"online message goes here"
+      "online":"online message goes here",
+      "ytkey":"youtube api key goes here"
     }
     ```
 
@@ -83,3 +86,4 @@ Project Link: [https://github.com/Dahl99/DiscordBot](https://github.com/Dahl99/D
 ## Acknowledgements
 
 * [DiscordGo](https://github.com/bwmarrin/discordgo)
+* [dca](https://github.com/jonas747/dca)
