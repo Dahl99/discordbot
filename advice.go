@@ -18,10 +18,8 @@ type allSlips struct {
 	Slips slip `json:"slip"`
 }
 
-func postAdvice(cmd []string, m *discordgo.MessageCreate) {
-	if len(cmd) == 1 { // Checks if advice command was used properly
-		dg.ChannelMessageSend(m.ChannelID, getAdvice())
-	}
+func postAdvice(m *discordgo.MessageCreate) {
+	dg.ChannelMessageSend(m.ChannelID, getAdvice())
 }
 
 func getAdvice() string {

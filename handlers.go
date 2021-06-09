@@ -50,9 +50,9 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case conf.Prefix + "dice":
 		rollDice(cmd, m)
 	case conf.Prefix + "insult":
-		postInsult(cmd, m)
+		postInsult(m)
 	case conf.Prefix + "advice":
-		postAdvice(cmd, m)
+		postAdvice(m)
 	case conf.Prefix + "music":
 		music(cmd[1:], v, s, m)
 	default:

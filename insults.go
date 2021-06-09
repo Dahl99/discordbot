@@ -13,10 +13,8 @@ type insult struct {
 	Insult string `json:"insult"`
 }
 
-func postInsult(cmd []string, m *discordgo.MessageCreate) {
-	if len(cmd) == 1 { // Checks if insult command was used properly
-		dg.ChannelMessageSend(m.ChannelID, getInsult())
-	}
+func postInsult(m *discordgo.MessageCreate) {
+	dg.ChannelMessageSend(m.ChannelID, getInsult())
 }
 
 func getInsult() string {
