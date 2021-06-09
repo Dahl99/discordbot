@@ -66,7 +66,7 @@ func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreat
 
 
 func leaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
-	log.Println("INFO: ", m.Author.Username, "requested 'leave'")
+	log.Println("INFO:", m.Author.Username, "requested 'leave'")
 
 	if v == nil {
 		log.Println("INFO: The bot is not in a voice channel!")
