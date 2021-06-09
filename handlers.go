@@ -55,6 +55,8 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		postAdvice(m)
 	case conf.Prefix + "music":
 		music(cmd[1:], v, s, m)
+	case conf.Prefix + "kanye":
+		postKanyeQuote(m)
 	default:
 		return
 	}

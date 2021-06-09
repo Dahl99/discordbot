@@ -47,3 +47,10 @@ const youtubeSearchEndpoint string = "https://www.googleapis.com/youtube/v3/sear
 const youtubeFindEndpoint string = "https://www.googleapis.com/youtube/v3/videos?part=snippet&key="
 
 const ytVideoUrl string = "https://www.youtube.com/watch?v="
+
+
+
+//									kanye.go
+//-----------------------------------------------------------------------------
+const kanyeRestEndpoint string = "https://api.kanye.rest/"
+const kanyeRestUnavailable string = "Oops, something went wrong when getting Kanye quote"
