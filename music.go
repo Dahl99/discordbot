@@ -2,6 +2,7 @@ package discordbot
 
 import (
 	"log"
+	"net/url"
 	"strings"
 	"time"
 
@@ -100,13 +101,26 @@ func playMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 	var videoTitle string
 	var err error
 
+	// If a youtube url is sent as argument
 	if strings.Contains(n[0], ytVideoUrl) {
-		videoId = strings.Split(n[0], "?v=")[1]
+		url, err := url.Parse(n[0])
+		if err != nil {
+			log.Println("INFO: Unable to parse youtube url")
+			dg.ChannelMessageSend(m.ChannelID, "[Music] Oops, something wrong happened when parsing youtube url")
+			return
+		}
+
+		query := url.Query()
+		videoId = query.Get("v")
+
 		videoTitle, err = ytFind(videoId)
 		if err != nil {
 			log.Println("INFO: unable to find title of song on youtube")
 			dg.ChannelMessageSend(m.ChannelID, "[Music] Oops, something went wrong when fetching title on YouTube")
+			return
 		}
+
+	// If argument(s) is not a youtube url
 	} else {
 		name := replaceSpace(n)
 		videoId, videoTitle, err = ytSearch(name)
@@ -120,7 +134,7 @@ func playMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 	song, err := execYtdl(videoId, videoTitle, v, m)
 
 	if err != nil || song.data.ID == "" {
-		log.Println("ERROR: Youtube search: ", err)
+		log.Println("INFO: Youtube search: ", err)
 		dg.ChannelMessageSend(m.ChannelID, "[Music] Unable to find song")
 		return
 	}
