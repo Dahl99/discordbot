@@ -35,6 +35,7 @@ func readConfiguration() {
 
 func Initialize() {
 	readConfiguration()
+	
 	var err error
 	dg, err = discordgo.New("Bot " + config.Token) // Initializing discord session
 	if err != nil {
@@ -48,7 +49,7 @@ func Initialize() {
 	dg.AddHandler(MessageCreateHandler)
 
 	if err := dg.Open(); err != nil { // Creating a connection
-		log.Println("Error opening connection,", err)
+		log.Println("ERROR: unable to open connection,", err)
 		return
 	}
 
