@@ -16,7 +16,7 @@ type configuration struct {
 	Ytkey string
 }
 
-// Global struct object containing bot configig
+// Global struct object containing bot config
 var config *configuration
 var dg *discordgo.Session
 
