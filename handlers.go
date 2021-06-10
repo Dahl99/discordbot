@@ -10,7 +10,7 @@ import (
 func ReadyHandler(s *discordgo.Session, event *discordgo.Ready) {
 
 	// Set the playing status.
-	s.UpdateGameStatus(0, conf.Status)
+	s.UpdateGameStatus(0, config.Status)
 }
 
 
@@ -23,7 +23,7 @@ func GuildCreateHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
 
 	for _, channel := range event.Guild.Channels {
 		if channel.ID == event.Guild.ID {
-			s.ChannelMessageSend(channel.ID, conf.Online)
+			s.ChannelMessageSend(channel.ID, config.Online)
 			return
 		}
 	}
@@ -41,21 +41,21 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	cmd := strings.Split(m.Content, " ") //	Splitting command into string slice
 
 	switch cmd[0] {
-	case conf.Prefix + "help":
+	case config.Prefix + "help":
 		dg.ChannelMessageSend(m.ChannelID, help + musicHelp)
-	case conf.Prefix + "ping":
+	case config.Prefix + "ping":
 		dg.ChannelMessageSend(m.ChannelID, "Pong!")
-	case conf.Prefix + "card":
+	case config.Prefix + "card":
 		postCard(cmd, m)
-	case conf.Prefix + "dice":
+	case config.Prefix + "dice":
 		rollDice(cmd, m)
-	case conf.Prefix + "insult":
+	case config.Prefix + "insult":
 		postInsult(m)
-	case conf.Prefix + "advice":
+	case config.Prefix + "advice":
 		postAdvice(m)
-	case conf.Prefix + "music":
+	case config.Prefix + "music":
 		music(cmd[1:], v, s, m)
-	case conf.Prefix + "kanye":
+	case config.Prefix + "kanye":
 		postKanyeQuote(m)
 	default:
 		return

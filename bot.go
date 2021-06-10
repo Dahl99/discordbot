@@ -8,7 +8,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-type config struct {
+type configuration struct {
 	Token string
 	Prefix string
 	Status string
@@ -16,28 +16,27 @@ type config struct {
 	Ytkey string
 }
 
-// Global struct object containing bot config
-var conf config
+// Global struct object containing bot configig
+var config *configuration
 var dg *discordgo.Session
 
-// readConfig reads the data the bot needs from the provided JSON file
-func readConfig() {
+// readconfigig reads the data the bot needs from the provided JSON file
+func readConfiguration() {
 	res, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		log.Println(err)
 	}
 
-	err = json.Unmarshal(res, &conf)
+	err = json.Unmarshal(res, &config)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
 func Initialize() {
-	readConfig()
-
+	readConfiguration()
 	var err error
-	dg, err = discordgo.New("Bot " + conf.Token) // Initializing discord session
+	dg, err = discordgo.New("Bot " + config.Token) // Initializing discord session
 	if err != nil {
 		log.Println("ERROR: error creating Discord session,", err)
 		return
