@@ -11,7 +11,7 @@ const decodingFailed string = "Something wrong happened when decoding data"
 
 //Help contains all the commands available
 const help string = "**Current commands are**:\n\tping\n\tcard <card name>\n\tdice <die sides>\n\tinsult\n\tadvice\n\tkanye"
-const musicHelp string = "\n\tmusic + ↓\n\t\tjoin\n\t\tleave\n\t\tplay <youtube url/query>\n\t\tskip\n\t\tstop"
+const musicHelp string = "\n\n\tmusic + ↓\n\t\tjoin\n\t\tleave\n\t\tplay <youtube url/query>\n\t\tskip\n\t\tstop"
 
 //									card.go
 //-----------------------------------------------------------------------------
