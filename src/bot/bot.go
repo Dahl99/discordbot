@@ -1,6 +1,8 @@
-package discordbot
+package bot
 
 import (
+	"discordbot/src/handlers"
+	"discordbot/src/music"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -17,8 +19,8 @@ type configuration struct {
 }
 
 // Global struct object containing bot config
-var config *configuration
-var dg *discordgo.Session
+var Config *configuration
+var Dg *discordgo.Session
 
 // readconfigig reads the data the bot needs from the provided JSON file
 func readConfiguration() {
@@ -27,7 +29,7 @@ func readConfiguration() {
 		log.Println(err)
 	}
 
-	err = json.Unmarshal(res, &config)
+	err = json.Unmarshal(res, &Config)
 	if err != nil {
 		log.Println(err)
 	}
@@ -37,18 +39,18 @@ func Initialize() {
 	readConfiguration()
 	
 	var err error
-	dg, err = discordgo.New("Bot " + config.Token) // Initializing discord session
+	Dg, err = discordgo.New("Bot " + Config.Token) // Initializing discord session
 	if err != nil {
 		log.Println("ERROR: error creating Discord session,", err)
 		return
 	}
 
 	// Register handlers as callbacks for the events.
-	dg.AddHandler(ReadyHandler)
-	dg.AddHandler(GuildCreateHandler)
-	dg.AddHandler(MessageCreateHandler)
+	Dg.AddHandler(handlers.ReadyHandler)
+	Dg.AddHandler(handlers.GuildCreateHandler)
+	Dg.AddHandler(handlers.MessageCreateHandler)
 
-	if err := dg.Open(); err != nil { // Creating a connection
+	if err := Dg.Open(); err != nil { // Creating a connection
 		log.Println("ERROR: unable to open connection,", err)
 		return
 	}
@@ -57,10 +59,10 @@ func Initialize() {
 }
 
 func initializeRoutine() {
-	songSignal = make(chan PkgSong)
-	go GlobalPlay(songSignal)
+	music.SongSignal = make(chan music.PkgSong)
+	go music.GlobalPlay(music.SongSignal)
 }
 
 func SafeDestroy() {
-	dg.Close()
+	Dg.Close()
 }

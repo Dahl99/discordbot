@@ -1,6 +1,11 @@
-package discordbot
+package handlers
 
 import (
+	"discordbot/src/bot"
+	"discordbot/src/commands"
+	"discordbot/src/consts"
+	"discordbot/src/music"
+	"discordbot/src/utils"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -10,7 +15,7 @@ import (
 func ReadyHandler(s *discordgo.Session, event *discordgo.Ready) {
 
 	// Set the playing status.
-	s.UpdateGameStatus(0, config.Status)
+	s.UpdateGameStatus(0, bot.Config.Status)
 }
 
 
@@ -23,7 +28,7 @@ func GuildCreateHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
 
 	for _, channel := range event.Guild.Channels {
 		if channel.ID == event.Guild.ID {
-			s.ChannelMessageSend(channel.ID, config.Online)
+			s.ChannelMessageSend(channel.ID, bot.Config.Online)
 			return
 		}
 	}
@@ -36,27 +41,27 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	guildID := searchGuild(m.ChannelID)
-	v := voiceInstances[guildID]
+	guildID := utils.SearchGuild(m.ChannelID)
+	v := music.VoiceInstances[guildID]
 	cmd := strings.Split(m.Content, " ") //	Splitting command into string slice
 
 	switch cmd[0] {
-	case config.Prefix + "help":
-		dg.ChannelMessageSend(m.ChannelID, help + musicHelp)
-	case config.Prefix + "ping":
-		dg.ChannelMessageSend(m.ChannelID, "Pong!")
-	case config.Prefix + "card":
-		postCard(cmd, m)
-	case config.Prefix + "dice":
-		rollDice(cmd, m)
-	case config.Prefix + "insult":
-		postInsult(m)
-	case config.Prefix + "advice":
-		postAdvice(m)
-	case config.Prefix + "music":
-		music(cmd[1:], v, s, m)
-	case config.Prefix + "kanye":
-		postKanyeQuote(m)
+	case bot.Config.Prefix + "help":
+		bot.Dg.ChannelMessageSend(m.ChannelID, consts.Help + consts.MusicHelp)
+	case bot.Config.Prefix + "ping":
+		bot.Dg.ChannelMessageSend(m.ChannelID, "Pong!")
+	case bot.Config.Prefix + "card":
+		commands.PostCard(cmd, m)
+	case bot.Config.Prefix + "dice":
+		commands.RollDice(cmd, m)
+	case bot.Config.Prefix + "insult":
+		commands.PostInsult(m)
+	case bot.Config.Prefix + "advice":
+		commands.PostAdvice(m)
+	case bot.Config.Prefix + "music":
+		music.Music(cmd[1:], v, s, m)
+	case bot.Config.Prefix + "kanye":
+		commands.PostKanyeQuote(m)
 	default:
 		return
 	}

@@ -1,6 +1,8 @@
-package discordbot
+package commands
 
 import (
+	"discordbot/src/bot"
+	"discordbot/src/consts"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -18,15 +20,15 @@ type allSlips struct {
 	Slips slip `json:"slip"`
 }
 
-func postAdvice(m *discordgo.MessageCreate) {
-	dg.ChannelMessageSend(m.ChannelID, getAdvice())
+func PostAdvice(m *discordgo.MessageCreate) {
+	bot.Dg.ChannelMessageSend(m.ChannelID, getAdvice())
 }
 
 func getAdvice() string {
-	res, err := http.Get(adviceSlipURL) // Fetching an advice
+	res, err := http.Get(consts.AdviceSlipURL) // Fetching an advice
 	if err != nil {                     // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
-		return adviceslipNotAvailable
+		return consts.AdviceslipNotAvailable
 	}
 
 	//	Decoding results into autoresult struct object
@@ -34,7 +36,7 @@ func getAdvice() string {
 	err = json.NewDecoder(res.Body).Decode(&slips)
 	if err != nil {
 		log.Println(err)
-		return decodingFailed
+		return consts.DecodingFailed
 	}
 	res.Body.Close() // Closing body to prevent resource leak
 
