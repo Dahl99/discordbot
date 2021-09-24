@@ -1,7 +1,7 @@
 package music
 
 import (
-	"discordbot/src/bot"
+	"discordbot/src/config"
 	"io"
 	"log"
 	"sync"
@@ -148,11 +148,11 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 		for {
 			if len(v.queue) == 0 {
 				log.Println("INFO: End of queue")
-				bot.Dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] End of queue")
+				config.Dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] End of queue")
 				return
 			}
 			v.nowPlaying = v.QueueGetSong()
-			go bot.Dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] Now playing: **" + v.nowPlaying.Title + "**")
+			go config.Dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] Now playing: **" + v.nowPlaying.Title + "**")
 
 			v.stop = false
 			v.skip = false

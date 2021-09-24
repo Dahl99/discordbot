@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"discordbot/src/bot"
 	"discordbot/src/consts"
+	"discordbot/src/utils"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -16,7 +16,7 @@ type insult struct {
 }
 
 func PostInsult(m *discordgo.MessageCreate) {
-	bot.Dg.ChannelMessageSend(m.ChannelID, getInsult())
+	utils.SendChannelMessage(m, getInsult())
 }
 
 func getInsult() string {

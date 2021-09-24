@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"discordbot/src/bot"
 	"discordbot/src/consts"
 	"discordbot/src/utils"
 	"encoding/json"
@@ -36,7 +35,7 @@ type fuzzyResult struct {
 func PostCard(cmd []string, m *discordgo.MessageCreate) {
 	// Getting card if card name was entered
 	if len(cmd) > 1 {
-		bot.Dg.ChannelMessageSend(m.ChannelID, getCard(cmd))
+		utils.SendChannelMessage(m, getCard(cmd))
 	}
 }
 

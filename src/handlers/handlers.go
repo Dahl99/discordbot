@@ -1,11 +1,12 @@
 package handlers
 
 import (
-	"discordbot/src/bot"
 	"discordbot/src/commands"
+	"discordbot/src/config"
 	"discordbot/src/consts"
 	"discordbot/src/music"
 	"discordbot/src/utils"
+
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -15,7 +16,7 @@ import (
 func ReadyHandler(s *discordgo.Session, event *discordgo.Ready) {
 
 	// Set the playing status.
-	s.UpdateGameStatus(0, bot.Config.Status)
+	s.UpdateGameStatus(0, config.Config.Status)
 }
 
 
@@ -28,7 +29,7 @@ func GuildCreateHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
 
 	for _, channel := range event.Guild.Channels {
 		if channel.ID == event.Guild.ID {
-			s.ChannelMessageSend(channel.ID, bot.Config.Online)
+			s.ChannelMessageSend(channel.ID, config.Config.Online)
 			return
 		}
 	}
@@ -46,21 +47,21 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	cmd := strings.Split(m.Content, " ") //	Splitting command into string slice
 
 	switch cmd[0] {
-	case bot.Config.Prefix + "help":
-		bot.Dg.ChannelMessageSend(m.ChannelID, consts.Help + consts.MusicHelp)
-	case bot.Config.Prefix + "ping":
-		bot.Dg.ChannelMessageSend(m.ChannelID, "Pong!")
-	case bot.Config.Prefix + "card":
+	case config.Config.Prefix + "help":
+		utils.SendChannelMessage(m, consts.Help + consts.MusicHelp)
+	case config.Config.Prefix + "ping":
+		utils.SendChannelMessage(m, "Pong!")
+	case config.Config.Prefix + "card":
 		commands.PostCard(cmd, m)
-	case bot.Config.Prefix + "dice":
+	case config.Config.Prefix + "dice":
 		commands.RollDice(cmd, m)
-	case bot.Config.Prefix + "insult":
+	case config.Config.Prefix + "insult":
 		commands.PostInsult(m)
-	case bot.Config.Prefix + "advice":
+	case config.Config.Prefix + "advice":
 		commands.PostAdvice(m)
-	case bot.Config.Prefix + "music":
+	case config.Config.Prefix + "music":
 		music.Music(cmd[1:], v, s, m)
-	case bot.Config.Prefix + "kanye":
+	case config.Config.Prefix + "kanye":
 		commands.PostKanyeQuote(m)
 	default:
 		return

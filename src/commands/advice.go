@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"discordbot/src/bot"
 	"discordbot/src/consts"
+	"discordbot/src/utils"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -21,7 +21,7 @@ type allSlips struct {
 }
 
 func PostAdvice(m *discordgo.MessageCreate) {
-	bot.Dg.ChannelMessageSend(m.ChannelID, getAdvice())
+	utils.SendChannelMessage(m, getAdvice())
 }
 
 func getAdvice() string {

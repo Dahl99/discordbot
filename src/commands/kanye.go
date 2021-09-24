@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"discordbot/src/bot"
 	"discordbot/src/consts"
+	"discordbot/src/utils"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -15,7 +15,7 @@ type kanyeQuote struct {
 }
 
 func PostKanyeQuote(m *discordgo.MessageCreate) {
-	bot.Dg.ChannelMessageSend(m.ChannelID, getKanyeQuote())
+	utils.SendChannelMessage(m, getKanyeQuote())
 }
 
 func getKanyeQuote() string {

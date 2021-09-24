@@ -2,7 +2,7 @@ package music
 
 import (
 	"bytes"
-	"discordbot/src/bot"
+	"discordbot/src/config"
 	"discordbot/src/consts"
 	"discordbot/src/utils"
 	"encoding/json"
@@ -50,7 +50,7 @@ type itemsFind struct {
 
 func ytSearch(name string) (string, string, error) {
 
-	res, err := http.Get(consts.YoutubeSearchEndpoint + bot.Config.Ytkey + "&q=" + name)
+	res, err := http.Get(consts.YoutubeSearchEndpoint + config.Config.Ytkey + "&q=" + name)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
 		return "", "", err
@@ -79,7 +79,7 @@ func ytSearch(name string) (string, string, error) {
 
 
 func ytFind(videoId string) (string, error) {
-	res, err := http.Get(consts.YoutubeFindEndpoint + bot.Config.Ytkey + "&id=" + videoId)
+	res, err := http.Get(consts.YoutubeFindEndpoint + config.Config.Ytkey + "&id=" + videoId)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
 		return "", err
