@@ -1,7 +1,10 @@
-package discordbot
+package music
 
 import (
 	"bytes"
+	"discordbot/src/config"
+	"discordbot/src/consts"
+	"discordbot/src/utils"
 	"encoding/json"
 	"errors"
 	"log"
@@ -47,7 +50,7 @@ type itemsFind struct {
 
 func ytSearch(name string) (string, string, error) {
 
-	res, err := http.Get(youtubeSearchEndpoint + config.Ytkey + "&q=" + name)
+	res, err := http.Get(consts.YoutubeSearchEndpoint + config.Config.Ytkey + "&q=" + name)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
 		return "", "", err
@@ -76,7 +79,7 @@ func ytSearch(name string) (string, string, error) {
 
 
 func ytFind(videoId string) (string, error) {
-	res, err := http.Get(youtubeFindEndpoint + config.Ytkey + "&id=" + videoId)
+	res, err := http.Get(consts.YoutubeFindEndpoint + config.Config.Ytkey + "&id=" + videoId)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
 		return "", err
@@ -123,7 +126,7 @@ func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.
 		return
 	}
 
-	guildID := searchGuild(m.ChannelID)
+	guildID := utils.SearchGuild(m.ChannelID)
 	member, _ := v.session.GuildMember(guildID, m.Author.ID)
 	userName := ""
 

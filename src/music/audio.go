@@ -1,6 +1,7 @@
-package discordbot
+package music
 
 import (
+	"discordbot/src/config"
 	"io"
 	"log"
 	"sync"
@@ -17,7 +18,7 @@ type VoiceInstance struct {
 	queueMutex sync.Mutex
 	nowPlaying Song
 	queue      []Song
-	guildID    string
+	GuildID    string
 	speaking   bool
 	pause      bool
 	stop       bool
@@ -39,9 +40,9 @@ type PkgSong struct {
 }
 
 var (
-	voiceInstances = map[string]*VoiceInstance{}
+	VoiceInstances = map[string]*VoiceInstance{}
 	mutex sync.Mutex
-	songSignal chan PkgSong
+	SongSignal chan PkgSong
 )
 
 func GlobalPlay(songSig chan PkgSong) {
@@ -147,11 +148,11 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 		for {
 			if len(v.queue) == 0 {
 				log.Println("INFO: End of queue")
-				dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] End of queue")
+				config.Dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] End of queue")
 				return
 			}
 			v.nowPlaying = v.QueueGetSong()
-			go dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] Now playing: **" + v.nowPlaying.Title + "**")
+			go config.Dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] Now playing: **" + v.nowPlaying.Title + "**")
 
 			v.stop = false
 			v.skip = false

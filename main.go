@@ -1,7 +1,7 @@
 package main
 
 import (
-	"discordbot"
+	"discordbot/src/bot"
 	"fmt"
 	"os"
 	"os/signal"
@@ -10,12 +10,12 @@ import (
 
 func main() {
 
-	discordbot.Initialize()
+	bot.Initialize()
 
 	fmt.Println("Bot is running. Press Ctrl + C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
 
-	discordbot.SafeDestroy()
+	bot.SafeDestroy()
 }

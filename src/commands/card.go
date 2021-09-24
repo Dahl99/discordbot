@@ -1,6 +1,8 @@
-package discordbot
+package commands
 
 import (
+	"discordbot/src/consts"
+	"discordbot/src/utils"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -30,28 +32,28 @@ type fuzzyResult struct {
 	Faces  [2]cardFaces `json:"card_faces"`
 }
 
-func postCard(cmd []string, m *discordgo.MessageCreate) {
+func PostCard(cmd []string, m *discordgo.MessageCreate) {
 	// Getting card if card name was entered
 	if len(cmd) > 1 {
-		dg.ChannelMessageSend(m.ChannelID, getCard(cmd))
+		utils.SendChannelMessage(m, getCard(cmd))
 	}
 }
 
 //getCard() fetches a card based on which card name used in command
 func getCard(n []string) string {
 
-	name := replaceSpace(n[1:]) // Replacing the spaces with "_" to avoid url problems
+	name := utils.ReplaceSpace(n[1:]) // Replacing the spaces with "_" to avoid url problems
 
 	if len(name) < 3 {
 		return "Name needs to have 3 or more letters to search"
 	}
 
-	URL := scryfallBaseURL + name // Sets url for exact card get request
+	URL := consts.ScryfallBaseURL + name // Sets url for exact card get request
 
 	res, err := http.Get(URL) // Fetching exact card
 	if err != nil {           // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
-		return scryfallNotAvailable
+		return consts.ScryfallNotAvailable
 	}
 
 	// Decoding fuzzyresult from get request
@@ -59,7 +61,7 @@ func getCard(n []string) string {
 	err = json.NewDecoder(res.Body).Decode(&card)
 	if err != nil {
 		log.Println(err)
-		return decodingFailed
+		return consts.DecodingFailed
 	}
 
 	res.Body.Close() // Closing body to prevent resource leak

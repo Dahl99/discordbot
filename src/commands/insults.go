@@ -1,6 +1,8 @@
-package discordbot
+package commands
 
 import (
+	"discordbot/src/consts"
+	"discordbot/src/utils"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -13,15 +15,15 @@ type insult struct {
 	Insult string `json:"insult"`
 }
 
-func postInsult(m *discordgo.MessageCreate) {
-	dg.ChannelMessageSend(m.ChannelID, getInsult())
+func PostInsult(m *discordgo.MessageCreate) {
+	utils.SendChannelMessage(m, getInsult())
 }
 
 func getInsult() string {
-	res, err := http.Get(insultURL) // Fetching an insult
+	res, err := http.Get(consts.InsultURL) // Fetching an insult
 	if err != nil {                 // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
-		return evilInsultNotAvailable
+		return consts.EvilInsultNotAvailable
 	}
 
 	var insultObj insult
@@ -29,7 +31,7 @@ func getInsult() string {
 	err = json.NewDecoder(res.Body).Decode(&insultObj) // Decoding data into struct object
 	if err != nil {
 		log.Println(err)
-		return decodingFailed
+		return consts.DecodingFailed
 	}
 
 	res.Body.Close() // Closing body to prevent resource leak
