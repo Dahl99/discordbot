@@ -59,10 +59,18 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		commands.PostInsult(m)
 	case config.Config.Prefix + "advice":
 		commands.PostAdvice(m)
-	case config.Config.Prefix + "music":
-		music.Music(cmd[1:], v, s, m)
 	case config.Config.Prefix + "kanye":
 		commands.PostKanyeQuote(m)
+	case config.Config.Prefix + "join":
+		music.JoinVoice(v, s, m)
+	case config.Config.Prefix + "leave":
+		music.LeaveVoice(v, m)
+	case config.Config.Prefix + "play":
+		music.PlayMusic(cmd[1:], v, m)
+	case config.Config.Prefix + "skip":
+		music.SkipMusic(v, m)
+	case config.Config.Prefix + "stop":
+		music.StopMusic(v, m)
 	default:
 		return
 	}

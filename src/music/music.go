@@ -12,29 +12,29 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func Music(cmd []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
+// func Music(cmd []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
 
-	if len(cmd) < 1 {
-		return
-	}
+// 	if len(cmd) < 1 {
+// 		return
+// 	}
 
-	switch(cmd[0]) {
-	case "join":
-		joinVoice(v, s, m)
-	case "leave":
-		leaveVoice(v, m)
-	case "play":
-		playMusic(cmd[1:], v, m)
-	case "skip":
-		skipMusic(v, m)
-	case "stop":
-		stopMusic(v, m)
-	default:
-		return
-	}
-}
+// 	switch(cmd[0]) {
+// 	case "join":
+// 		joinVoice(v, s, m)
+// 	case "leave":
+// 		leaveVoice(v, m)
+// 	case "play":
+// 		playMusic(cmd[1:], v, m)
+// 	case "skip":
+// 		skipMusic(v, m)
+// 	case "stop":
+// 		stopMusic(v, m)
+// 	default:
+// 		return
+// 	}
+// }
 
-func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
+func JoinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
 	voiceChannelID := utils.SearchVoiceChannel(m.Author.ID)
 	if voiceChannelID == "" {
 		log.Println("Voice channel id not found")
@@ -68,7 +68,7 @@ func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreat
 }
 
 
-func leaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
+func LeaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
 	log.Println("INFO:", m.Author.Username, "requested 'leave'")
 
 	if v == nil {
@@ -87,7 +87,7 @@ func leaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
 }
 
 
-func playMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
+func PlayMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 	if v == nil {
 		log.Println("INFO: The bot is not in a voice channel")
 		config.Dg.ChannelMessageSend(m.ChannelID, "[Music] I need to join a voice channel first!")
@@ -149,7 +149,7 @@ func playMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 	}()
 }
 
-func skipMusic(v *VoiceInstance, m *discordgo.MessageCreate) {
+func SkipMusic(v *VoiceInstance, m *discordgo.MessageCreate) {
 	log.Println("INFO:", m.Author.Username, "send 'skip'")
 	if v == nil {
 		log.Println("INFO: The bot is not in a voice channel")
@@ -167,7 +167,7 @@ func skipMusic(v *VoiceInstance, m *discordgo.MessageCreate) {
 }
 
 
-func stopMusic(v *VoiceInstance, m *discordgo.MessageCreate) {
+func StopMusic(v *VoiceInstance, m *discordgo.MessageCreate) {
 	log.Println("INFO:", m.Author.Username, "requested stopping of music")
 
 	if v == nil {
