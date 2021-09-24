@@ -35,3 +35,6 @@
 ### Bot ###
 token.go
 config.json
+
+# Docker
+tmp/
