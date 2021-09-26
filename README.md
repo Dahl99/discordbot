@@ -19,7 +19,6 @@
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
 
@@ -30,9 +29,11 @@ There are many great Discord bots out there, but I wanted to develop my own. I w
 ### Built With
 
 This discord bot is built with:
-* [Go version 1.16.5](https://golang.org/)
+
+* [Go version 1.17.1](https://golang.org/)
 * [DiscordGo](https://github.com/bwmarrin/discordgo)
 * [dca](https://github.com/jonas747/dca)
+* [nodemon](https://nodemon.io/)
 
 ## Getting Started
 
@@ -42,9 +43,8 @@ To get a local copy up and running follow these simple example steps.
 
 In order to run this project you will need the following:
 
-* Go 1.16.5 installed
-* youtube-dl installed
-* ffmpeg installed
+* Go 1.17.1 installed
+* Docker and Docker Compose installed
 * Discord account
 * Google developer account
 
@@ -54,15 +54,20 @@ In order to run this project you will need the following:
 2. Create a new application
 3. Add a bot user to the application
 4. Get the token for the bot
-5. Clone the repo
+5. Clone the repository
+
    ```sh
    git clone https://github.com/Dahl99/DiscordBot.git
    ```
-6. Install [DiscordGo](https://github.com/bwmarrin/discordgo)
+
+6. Install dependencies
+
    ```sh
-   go get github.com/bwmarrin/discordgo
+   go mod download all
    ```
+
 7. Create the json file `config.json` in the root folder and add the following:
+
     ```json
     {
       "token":"token goes here",
@@ -75,17 +80,12 @@ In order to run this project you will need the following:
 
 ## Usage
 
-To run the discord bot from root directory:
+To run the discord bot from root directory, execute the following command
 
 ```sh
-go run cmd/main.go
+docker compose up
 ```
 
 ## Contact
 
 Project Link: [https://github.com/Dahl99/DiscordBot](https://github.com/Dahl99/DiscordBot)
-
-## Acknowledgements
-
-* [DiscordGo](https://github.com/bwmarrin/discordgo)
-* [dca](https://github.com/jonas747/dca)
