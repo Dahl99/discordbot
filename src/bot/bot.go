@@ -21,7 +21,7 @@ func Initialize() {
 
 	// Register handlers as callbacks for the events.
 	config.Dg.AddHandler(handlers.ReadyHandler)
-	config.Dg.AddHandler(handlers.GuildCreateHandler)
+	// config.Dg.AddHandler(handlers.GuildCreateHandler)
 	config.Dg.AddHandler(handlers.MessageCreateHandler)
 
 	if err := config.Dg.Open(); err != nil { // Creating a connection
