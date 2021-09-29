@@ -3,16 +3,17 @@ FROM golang:1.17.1
 # Set working directory
 WORKDIR /app
 
-# Copy go moduel files and config for bot
+# Copy go module files and config for bot
 COPY go.mod .
 COPY go.sum .
 COPY config.json .
 
 # Update and install apt dependencies
-RUN apt update
-RUN apt install -y python3
-RUN apt install -y ffmpeg
-RUN apt install -y nodejs npm
+RUN apt update && apt install -y \
+    python3 \
+    ffmpeg \
+    nodejs \
+    npm
 
 # Install nodemon
 RUN npm install -g nodemon
