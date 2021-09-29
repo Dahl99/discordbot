@@ -16,12 +16,6 @@ const MusicHelp string = "\n\nMusic commands:\n\tjoin\n\tleave\n\tplay <youtube 
 //									card.go
 //-----------------------------------------------------------------------------
 
-// ScryfallBaseURL contains the root of the url
-const ScryfallBaseURL string = "https://api.scryfall.com/cards/named?fuzzy="
-
-// ScryfallNotAvailable contains string to be sent if scryfall API is unavailable
-const ScryfallNotAvailable string = "Scryfall API not available at the moment."
-
 //									advice.go
 //-----------------------------------------------------------------------------
 

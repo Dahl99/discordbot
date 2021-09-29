@@ -12,6 +12,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// scryfallBaseeUrl contains the root of the url
+const scryfallBaseeUrl string = "https://api.scryfall.com/cards/named?fuzzy="
+
+// ScryfallNotAvailable contains string to be sent if scryfall API is unavailable
+const ScryfallNotAvailable string = "Scryfall API not available at the moment."
+
 //Sub struct in exactResult struct. It's used to store the imageURIs from scryfall api
 type imageURI struct {
 	Png string `json:"png"`
@@ -50,12 +56,12 @@ func getCard(n []string) string {
 		return "Name needs to have 3 or more letters to search"
 	}
 
-	URL := consts.ScryfallBaseURL + name // Sets url for exact card get request
+	URL := scryfallBaseeUrl + name // Sets url for exact card get request
 
 	res, err := http.Get(URL) // Fetching exact card
 	if err != nil {           // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
-		return consts.ScryfallNotAvailable
+		return ScryfallNotAvailable
 	}
 
 	// Decoding fuzzyresult from get request

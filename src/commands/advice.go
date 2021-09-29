@@ -11,6 +11,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// adviceSlipURL contains url to adviceslip API
+const adviceSlipURL string = "https://api.adviceslip.com/advice"
+
+// adviceslipNotAvailable contains string to be sent if adviceslip API is unavailable
+const adviceslipNotAvailable string = "Adviceslip API not available at the moment."
+
 //Struct used to store advice in json
 type slip struct {
 	Advice string `json:"advice"`
@@ -26,10 +32,10 @@ func PostAdvice(m *discordgo.MessageCreate) {
 }
 
 func getAdvice() string {
-	res, err := http.Get(consts.AdviceSlipURL) // Fetching an advice
-	if err != nil {                            // Checking for errors
+	res, err := http.Get(adviceSlipURL) // Fetching an advice
+	if err != nil {                     // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
-		return consts.AdviceslipNotAvailable
+		return adviceslipNotAvailable
 	}
 
 	//	Decoding results into autoresult struct object
