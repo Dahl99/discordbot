@@ -13,15 +13,6 @@ const DecodingFailed string = "Something wrong happened when decoding data"
 const Help string = "```Current commands are:\n\tping\n\tcard <card name>\n\tdice <die sides>\n\tinsult\n\tadvice\n\tkanye"
 const MusicHelp string = "\n\nMusic commands:\n\tjoin\n\tleave\n\tplay <youtube url/query>\n\tskip\n\tstop```"
 
-//									insults.go
-//-----------------------------------------------------------------------------
-
-// InsultURL contains the url for the API generating insults
-const InsultURL string = "https://evilinsult.com/generate_insult.php?lang=en&type=json"
-
-// EvilInsultNotAvailable String to be sent if Evil Insult API isn't available
-const EvilInsultNotAvailable string = "Evil Insult API not available at the moment. Please try again later."
-
 //									youtube.go
 //-----------------------------------------------------------------------------
 
