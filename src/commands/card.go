@@ -37,7 +37,7 @@ type fuzzyResult struct {
 func PostCard(cmd []string, m *discordgo.MessageCreate) {
 	// Getting card if card name was entered
 	if len(cmd) > 1 {
-		utils.SendChannelMessage(m, getCard(cmd))
+		utils.SendChannelMessage(m.ChannelID, getCard(cmd))
 	}
 }
 

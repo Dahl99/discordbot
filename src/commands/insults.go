@@ -1,11 +1,12 @@
 package commands
 
 import (
-	"discordbot/src/consts"
-	"discordbot/src/utils"
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"discordbot/src/consts"
+	"discordbot/src/utils"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -16,12 +17,12 @@ type insult struct {
 }
 
 func PostInsult(m *discordgo.MessageCreate) {
-	utils.SendChannelMessage(m, getInsult())
+	utils.SendChannelMessage(m.ChannelID, getInsult())
 }
 
 func getInsult() string {
 	res, err := http.Get(consts.InsultURL) // Fetching an insult
-	if err != nil {                 // Checking for errors
+	if err != nil {                        // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
 		return consts.EvilInsultNotAvailable
 	}

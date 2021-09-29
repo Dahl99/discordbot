@@ -3,7 +3,7 @@ package consts
 //									global
 //-----------------------------------------------------------------------------
 
-//Const containing string to be sent if decoding fails
+// DecodingFailed contains string to be sent if decoding fails
 const DecodingFailed string = "Something wrong happened when decoding data"
 
 //								  handlers.go
@@ -16,28 +16,28 @@ const MusicHelp string = "\n\nMusic commands:\n\tjoin\n\tleave\n\tplay <youtube 
 //									card.go
 //-----------------------------------------------------------------------------
 
-//Const containing the root of the url
+// ScryfallBaseURL contains the root of the url
 const ScryfallBaseURL string = "https://api.scryfall.com/cards/named?fuzzy="
 
-//Const containing string to be sent if scryfall API is unavailable
+// ScryfallNotAvailable contains string to be sent if scryfall API is unavailable
 const ScryfallNotAvailable string = "Scryfall API not available at the moment."
 
 //									advice.go
 //-----------------------------------------------------------------------------
 
-//contains url to adviceslip API
+// AdviceSlipURL contains url to adviceslip API
 const AdviceSlipURL string = "https://api.adviceslip.com/advice"
 
-//Const containing string to be sent if adviceslip API is unavailable
+// AdviceslipNotAvailable contains string to be sent if adviceslip API is unavailable
 const AdviceslipNotAvailable string = "Adviceslip API not available at the moment."
 
 //									insults.go
 //-----------------------------------------------------------------------------
 
-//insultURL contains the url for the API generating insults
+// InsultURL contains the url for the API generating insults
 const InsultURL string = "https://evilinsult.com/generate_insult.php?lang=en&type=json"
 
-//String to be sent if Evil Insult API isn't available
+// EvilInsultNotAvailable String to be sent if Evil Insult API isn't available
 const EvilInsultNotAvailable string = "Evil Insult API not available at the moment. Please try again later."
 
 //									youtube.go
@@ -47,8 +47,6 @@ const YoutubeSearchEndpoint string = "https://www.googleapis.com/youtube/v3/sear
 const YoutubeFindEndpoint string = "https://www.googleapis.com/youtube/v3/videos?part=snippet&key="
 
 const YtVideoUrl string = "https://www.youtube.com/watch?v="
-
-
 
 //									kanye.go
 //-----------------------------------------------------------------------------
