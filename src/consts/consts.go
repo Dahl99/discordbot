@@ -13,18 +13,6 @@ const DecodingFailed string = "Something wrong happened when decoding data"
 const Help string = "```Current commands are:\n\tping\n\tcard <card name>\n\tdice <die sides>\n\tinsult\n\tadvice\n\tkanye"
 const MusicHelp string = "\n\nMusic commands:\n\tjoin\n\tleave\n\tplay <youtube url/query>\n\tskip\n\tstop```"
 
-//									card.go
-//-----------------------------------------------------------------------------
-
-//									advice.go
-//-----------------------------------------------------------------------------
-
-// AdviceSlipURL contains url to adviceslip API
-const AdviceSlipURL string = "https://api.adviceslip.com/advice"
-
-// AdviceslipNotAvailable contains string to be sent if adviceslip API is unavailable
-const AdviceslipNotAvailable string = "Adviceslip API not available at the moment."
-
 //									insults.go
 //-----------------------------------------------------------------------------
 
