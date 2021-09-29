@@ -1,38 +1,17 @@
 package music
 
 import (
-	"discordbot/src/config"
-	"discordbot/src/consts"
-	"discordbot/src/utils"
 	"log"
 	"net/url"
 	"strings"
 	"time"
 
+	"discordbot/src/config"
+	"discordbot/src/consts"
+	"discordbot/src/utils"
+
 	"github.com/bwmarrin/discordgo"
 )
-
-// func Music(cmd []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
-
-// 	if len(cmd) < 1 {
-// 		return
-// 	}
-
-// 	switch(cmd[0]) {
-// 	case "join":
-// 		joinVoice(v, s, m)
-// 	case "leave":
-// 		leaveVoice(v, m)
-// 	case "play":
-// 		playMusic(cmd[1:], v, m)
-// 	case "skip":
-// 		skipMusic(v, m)
-// 	case "stop":
-// 		stopMusic(v, m)
-// 	default:
-// 		return
-// 	}
-// }
 
 func JoinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
 	voiceChannelID := utils.SearchVoiceChannel(m.Author.ID)
@@ -67,7 +46,6 @@ func JoinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreat
 	config.Dg.ChannelMessageSend(m.ChannelID, "[Music] Voice channel joined!")
 }
 
-
 func LeaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
 	log.Println("INFO:", m.Author.Username, "requested 'leave'")
 
@@ -86,7 +64,6 @@ func LeaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
 	config.Dg.ChannelMessageSend(m.ChannelID, "[Music] Voice channel left!")
 }
 
-
 func PlayMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 	if v == nil {
 		log.Println("INFO: The bot is not in a voice channel")
@@ -96,7 +73,7 @@ func PlayMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 
 	voiceChannelID := utils.SearchVoiceChannel(m.Author.ID)
 	if v.voice.ChannelID != voiceChannelID {
-		config.Dg.ChannelMessageSend(m.ChannelID, "[Music] <@" + m.Author.ID + "> you need to join my voice channel first!")
+		config.Dg.ChannelMessageSend(m.ChannelID, "[Music] <@"+m.Author.ID+"> you need to join my voice channel first!")
 		return
 	}
 
@@ -123,9 +100,9 @@ func PlayMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 			return
 		}
 
-	// If argument(s) is not a youtube url
+		// If argument(s) is not a youtube url
 	} else {
-		name := utils.ReplaceSpace(n)
+		name := strings.Join(n, "_")
 		videoId, videoTitle, err = ytSearch(name)
 		if err != nil {
 			log.Println("INFO: Unable to find song by searching youtube")
@@ -142,7 +119,7 @@ func PlayMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 		return
 	}
 
-	config.Dg.ChannelMessageSend(m.ChannelID, "[Music] " + song.data.User + " has added **" + song.data.Title + "** to the queue")
+	config.Dg.ChannelMessageSend(m.ChannelID, "[Music] "+song.data.User+" has added **"+song.data.Title+"** to the queue")
 
 	go func() {
 		SongSignal <- song
@@ -165,7 +142,6 @@ func SkipMusic(v *VoiceInstance, m *discordgo.MessageCreate) {
 		config.Dg.ChannelMessageSend(m.ChannelID, "[Music] I'm paused, resume first")
 	}
 }
-
 
 func StopMusic(v *VoiceInstance, m *discordgo.MessageCreate) {
 	log.Println("INFO:", m.Author.Username, "requested stopping of music")
