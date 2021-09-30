@@ -6,12 +6,14 @@ import (
 	"strings"
 	"time"
 
-	"discordbot/src/consts"
 	"discordbot/src/context"
 	"discordbot/src/utils"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+//	ytVideoUrl is a constant containing endpoint for a youtube video
+const ytVideoUrl string = "https://www.youtube.com/watch?v="
 
 func InitializeRoutine() {
 	SongSignal = make(chan PkgSong)
@@ -87,7 +89,7 @@ func PlayMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
 	var err error
 
 	// If a youtube url is sent as argument
-	if strings.Contains(n[0], consts.YtVideoUrl) {
+	if strings.Contains(n[0], ytVideoUrl) {
 		url, err := url.Parse(n[0])
 		if err != nil {
 			log.Println("INFO: Unable to parse youtube url")

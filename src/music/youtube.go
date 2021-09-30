@@ -9,11 +9,16 @@ import (
 	"os/exec"
 
 	"discordbot/src/config"
-	"discordbot/src/consts"
 	"discordbot/src/utils"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+//	youtubeSearchEndpoint contains YouTube endpoint for searching after a video
+const youtubeSearchEndpoint string = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&key="
+
+//	youtubeFindEndpoint contains endpoint for finding more details about a video
+const youtubeFindEndpoint string = "https://www.googleapis.com/youtube/v3/videos?part=snippet&key="
 
 // Structs for doing a Youtube search
 type ytPageSearch struct {
@@ -50,7 +55,7 @@ type itemsFind struct {
 
 func ytSearch(name string) (string, string, error) {
 
-	res, err := http.Get(consts.YoutubeSearchEndpoint + config.GetYtKey() + "&q=" + name)
+	res, err := http.Get(youtubeSearchEndpoint + config.GetYtKey() + "&q=" + name)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
 		return "", "", err
@@ -78,7 +83,7 @@ func ytSearch(name string) (string, string, error) {
 }
 
 func ytFind(videoId string) (string, error) {
-	res, err := http.Get(consts.YoutubeFindEndpoint + config.GetYtKey() + "&id=" + videoId)
+	res, err := http.Get(youtubeFindEndpoint + config.GetYtKey() + "&id=" + videoId)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
 		return "", err
