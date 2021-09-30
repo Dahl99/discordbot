@@ -4,31 +4,48 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-
-	"github.com/bwmarrin/discordgo"
 )
+
 type configuration struct {
-	Token string
+	Token  string
 	Prefix string
 	Status string
 	Online string
-	Ytkey string
+	Ytkey  string
 }
 
-var Dg *discordgo.Session
+// Config is a global struct object containing bot config
+var config *configuration
 
-// Global struct object containing bot config
-var Config *configuration
+func GetDiscordToken() string {
+	return config.Token
+}
 
-// readconfigig reads the data the bot needs from the provided JSON file
-func ReadConfiguration() {
+func GetPrefix() string {
+	return config.Prefix
+}
+
+func GetStatusText() string {
+	return config.Status
+}
+
+func GetOnlineText() string {
+	return config.Online
+}
+
+func GetYtKey() string {
+	return config.Ytkey
+}
+
+// Load reads the data the bot needs from the provided JSON file
+func Load() {
 	res, err := ioutil.ReadFile("./config.json")
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 	}
 
-	err = json.Unmarshal(res, &Config)
+	err = json.Unmarshal(res, &config)
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 	}
 }

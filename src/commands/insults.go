@@ -1,14 +1,21 @@
 package commands
 
 import (
-	"discordbot/src/consts"
-	"discordbot/src/utils"
 	"encoding/json"
 	"log"
 	"net/http"
 
+	"discordbot/src/consts"
+	"discordbot/src/utils"
+
 	"github.com/bwmarrin/discordgo"
 )
+
+// insultUrl contains the url for the API generating insults
+const insultUrl string = "https://evilinsult.com/generate_insult.php?lang=en&type=json"
+
+// evilInsultNotAvailable String to be sent if Evil Insult API isn't available
+const evilInsultNotAvailable string = "Evil Insult API not available at the moment. Please try again later."
 
 // Struct to store fetched data from Evil Insult API
 type insult struct {
@@ -16,14 +23,14 @@ type insult struct {
 }
 
 func PostInsult(m *discordgo.MessageCreate) {
-	utils.SendChannelMessage(m, getInsult())
+	utils.SendChannelMessage(m.ChannelID, getInsult())
 }
 
 func getInsult() string {
-	res, err := http.Get(consts.InsultURL) // Fetching an insult
+	res, err := http.Get(insultUrl) // Fetching an insult
 	if err != nil {                 // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
-		return consts.EvilInsultNotAvailable
+		return evilInsultNotAvailable
 	}
 
 	var insultObj insult

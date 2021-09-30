@@ -1,14 +1,21 @@
 package commands
 
 import (
-	"discordbot/src/consts"
-	"discordbot/src/utils"
 	"encoding/json"
 	"log"
 	"net/http"
 
+	"discordbot/src/consts"
+	"discordbot/src/utils"
+
 	"github.com/bwmarrin/discordgo"
 )
+
+// adviceSlipURL contains url to adviceslip API
+const adviceSlipURL string = "https://api.adviceslip.com/advice"
+
+// adviceSlipNotAvailable contains string to be sent if adviceslip API is unavailable
+const adviceSlipNotAvailable string = "Adviceslip API not available at the moment."
 
 //Struct used to store advice in json
 type slip struct {
@@ -21,14 +28,14 @@ type allSlips struct {
 }
 
 func PostAdvice(m *discordgo.MessageCreate) {
-	utils.SendChannelMessage(m, getAdvice())
+	utils.SendChannelMessage(m.ChannelID, getAdvice())
 }
 
 func getAdvice() string {
-	res, err := http.Get(consts.AdviceSlipURL) // Fetching an advice
+	res, err := http.Get(adviceSlipURL) // Fetching an advice
 	if err != nil {                     // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
-		return consts.AdviceslipNotAvailable
+		return adviceSlipNotAvailable
 	}
 
 	//	Decoding results into autoresult struct object

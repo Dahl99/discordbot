@@ -1,10 +1,11 @@
 package music
 
 import (
-	"discordbot/src/config"
 	"io"
 	"log"
 	"sync"
+
+	"discordbot/src/utils"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/jung-m/dca"
@@ -41,8 +42,8 @@ type PkgSong struct {
 
 var (
 	VoiceInstances = map[string]*VoiceInstance{}
-	mutex sync.Mutex
-	SongSignal chan PkgSong
+	mutex          sync.Mutex
+	SongSignal     chan PkgSong
 )
 
 func GlobalPlay(songSig chan PkgSong) {
@@ -138,7 +139,7 @@ func (v *VoiceInstance) DCA(url string) {
 func (v *VoiceInstance) PlayQueue(song Song) {
 	// add song to queue
 	v.QueueAdd(song)
-	
+
 	if v.speaking {
 		// the bot is playing
 		return
@@ -148,11 +149,11 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 		for {
 			if len(v.queue) == 0 {
 				log.Println("INFO: End of queue")
-				config.Dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] End of queue")
+				utils.SendChannelMessage(v.nowPlaying.ChannelID, "[Music] End of queue")
 				return
 			}
 			v.nowPlaying = v.QueueGetSong()
-			go config.Dg.ChannelMessageSend(v.nowPlaying.ChannelID, "[Music] Now playing: **" + v.nowPlaying.Title + "**")
+			go utils.SendChannelMessage(v.nowPlaying.ChannelID, "[Music] Now playing: **"+v.nowPlaying.Title+"**")
 
 			v.stop = false
 			v.skip = false
@@ -166,7 +167,7 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 			if v.stop {
 				v.QueueRemove()
 			}
-			
+
 			v.stop = false
 			v.skip = false
 			v.speaking = false

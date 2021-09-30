@@ -3,7 +3,7 @@ package handlers
 import (
 	"discordbot/src/commands"
 	"discordbot/src/config"
-	"discordbot/src/consts"
+	"discordbot/src/context"
 	"discordbot/src/music"
 	"discordbot/src/utils"
 
@@ -12,15 +12,27 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// This function will be called when the bot receives the "ready" event from Discord.
+//help is a constant for info provided in help command
+const help string = "```Current commands are:\n\tping\n\tcard <card name>\n\tdice <die sides>\n\tinsult\n\tadvice\n\tkanye"
+
+// musicHelp is a constant for info provided about music functionality in help command
+const musicHelp string = "\n\nMusic commands:\n\tjoin\n\tleave\n\tplay <youtube url/query>\n\tskip\n\tstop```"
+
+func AddHandlers() {
+	// Register handlers as callbacks for the events.
+	context.Dg.AddHandler(ReadyHandler)
+	// context.Dg.AddHandler(GuildCreateHandler)
+	context.Dg.AddHandler(MessageCreateHandler)
+}
+
+// ReadyHandler will be called when the bot receives the "ready" event from Discord.
 func ReadyHandler(s *discordgo.Session, event *discordgo.Ready) {
 
 	// Set the playing status.
-	s.UpdateGameStatus(0, config.Config.Status)
+	s.UpdateGameStatus(0, config.GetStatusText())
 }
 
-
-// This function will be called every time a new guild is joined.
+// GuildCreateHandler will be called every time a new guild is joined.
 func GuildCreateHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
 
 	if event.Guild.Unavailable {
@@ -29,47 +41,47 @@ func GuildCreateHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
 
 	for _, channel := range event.Guild.Channels {
 		if channel.ID == event.Guild.ID {
-			s.ChannelMessageSend(channel.ID, config.Config.Online)
+			s.ChannelMessageSend(channel.ID, config.GetOnlineText())
 			return
 		}
 	}
 }
 
-
-//MessageCreate will be called everytime a new message is sent in a channel the bot has access to
+// MessageCreateHandler will be called everytime a new message is sent in a channel the bot has access to
 func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID { // Preventing bot from using own commands
 		return
 	}
 
+	prefix := config.GetPrefix()
 	guildID := utils.SearchGuild(m.ChannelID)
 	v := music.VoiceInstances[guildID]
 	cmd := strings.Split(m.Content, " ") //	Splitting command into string slice
 
 	switch cmd[0] {
-	case config.Config.Prefix + "help":
-		utils.SendChannelMessage(m, consts.Help + consts.MusicHelp)
-	case config.Config.Prefix + "ping":
-		utils.SendChannelMessage(m, "Pong!")
-	case config.Config.Prefix + "card":
+	case prefix + "help":
+		utils.SendChannelMessage(m.ChannelID, help+musicHelp)
+	case prefix + "ping":
+		utils.SendChannelMessage(m.ChannelID, "Pong!")
+	case prefix + "card":
 		commands.PostCard(cmd, m)
-	case config.Config.Prefix + "dice":
+	case prefix + "dice":
 		commands.RollDice(cmd, m)
-	case config.Config.Prefix + "insult":
+	case prefix + "insult":
 		commands.PostInsult(m)
-	case config.Config.Prefix + "advice":
+	case prefix + "advice":
 		commands.PostAdvice(m)
-	case config.Config.Prefix + "kanye":
+	case prefix + "kanye":
 		commands.PostKanyeQuote(m)
-	case config.Config.Prefix + "join":
+	case prefix + "join":
 		music.JoinVoice(v, s, m)
-	case config.Config.Prefix + "leave":
+	case prefix + "leave":
 		music.LeaveVoice(v, m)
-	case config.Config.Prefix + "play":
+	case prefix + "play":
 		music.PlayMusic(cmd[1:], v, m)
-	case config.Config.Prefix + "skip":
+	case prefix + "skip":
 		music.SkipMusic(v, m)
-	case config.Config.Prefix + "stop":
+	case prefix + "stop":
 		music.StopMusic(v, m)
 	default:
 		return

@@ -2,25 +2,31 @@ package music
 
 import (
 	"bytes"
-	"discordbot/src/config"
-	"discordbot/src/consts"
-	"discordbot/src/utils"
 	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
 	"os/exec"
 
+	"discordbot/src/config"
+	"discordbot/src/utils"
+
 	"github.com/bwmarrin/discordgo"
 )
 
-// Structs for doing a youtube search
+//	youtubeSearchEndpoint contains YouTube endpoint for searching after a video
+const youtubeSearchEndpoint string = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&key="
+
+//	youtubeFindEndpoint contains endpoint for finding more details about a video
+const youtubeFindEndpoint string = "https://www.googleapis.com/youtube/v3/videos?part=snippet&key="
+
+// Structs for doing a Youtube search
 type ytPageSearch struct {
 	Items []itemsSearch `json:"items"`
 }
 
 type itemsSearch struct {
-	Id id `json:"id"`
+	Id      id      `json:"id"`
 	Snippet snippet `json:"snippet"`
 }
 
@@ -47,10 +53,9 @@ type itemsFind struct {
 	Snippet snippet `json:"snippet"`
 }
 
-
 func ytSearch(name string) (string, string, error) {
 
-	res, err := http.Get(consts.YoutubeSearchEndpoint + config.Config.Ytkey + "&q=" + name)
+	res, err := http.Get(youtubeSearchEndpoint + config.GetYtKey() + "&q=" + name)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
 		return "", "", err
@@ -77,9 +82,8 @@ func ytSearch(name string) (string, string, error) {
 	return videoId, videoTitle, nil
 }
 
-
 func ytFind(videoId string) (string, error) {
-	res, err := http.Get(consts.YoutubeFindEndpoint + config.Config.Ytkey + "&id=" + videoId)
+	res, err := http.Get(youtubeFindEndpoint + config.GetYtKey() + "&id=" + videoId)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
 		return "", err
@@ -105,7 +109,6 @@ func ytFind(videoId string) (string, error) {
 
 	return videoTitle, nil
 }
-
 
 func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.MessageCreate) (song_struct PkgSong, err error) {
 
@@ -136,7 +139,7 @@ func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.
 		userName = member.Nick
 	}
 
-	song := Song {
+	song := Song{
 		m.ChannelID,
 		userName,
 		m.Author.ID,

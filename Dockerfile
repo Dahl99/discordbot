@@ -1,31 +1,37 @@
-FROM golang:1.17.1
+FROM golang:1.17.1 AS builder
 
 # Set working directory
-WORKDIR /app
+WORKDIR /src
 
-# Copy go moduel files and config for bot
-COPY go.mod .
-COPY go.sum .
-COPY config.json .
-
-# Update and install apt dependencies
-RUN apt update
-RUN apt install -y python3
-RUN apt install -y ffmpeg
-RUN apt install -y nodejs npm
-
-# Install nodemon
-RUN npm install -g nodemon
-
-# Symlink python3 to python
-RUN ln -s /usr/bin/python3 /usr/bin/python
+# Copy go module files and config for bot
+COPY go.mod go.sum ./
 
 # Download go module dependencies
 RUN go mod download all
+
+COPY . ./
+RUN go build -v -o /bin/app ./*.go
+
+FROM debian:buster-slim
+
+WORKDIR /app
+
+# Update and install apt dependencies
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    curl \
+    python3 \
+    ffmpeg
+
+# Symlink python3 to python
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Download youtube-dl and chmod correct permissions
 RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
 RUN chmod a+rx /usr/local/bin/youtube-dl
 
+COPY config.json ./
+COPY --from=builder /bin/app ./
+
 # Start app using nodemon
-CMD ["nodemon", "--exec", "go", "run", "/app/main.go", "--signal", "SIGTERM"]
+CMD ["./main"]
