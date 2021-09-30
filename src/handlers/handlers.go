@@ -3,7 +3,6 @@ package handlers
 import (
 	"discordbot/src/commands"
 	"discordbot/src/config"
-	"discordbot/src/consts"
 	"discordbot/src/context"
 	"discordbot/src/music"
 	"discordbot/src/utils"
@@ -12,6 +11,12 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 )
+
+//help is a constant for info provided in help command
+const help string = "```Current commands are:\n\tping\n\tcard <card name>\n\tdice <die sides>\n\tinsult\n\tadvice\n\tkanye"
+
+// musicHelp is a constant for info provided about music functionality in help command
+const musicHelp string = "\n\nMusic commands:\n\tjoin\n\tleave\n\tplay <youtube url/query>\n\tskip\n\tstop```"
 
 func AddHandlers() {
 	// Register handlers as callbacks for the events.
@@ -55,7 +60,7 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	switch cmd[0] {
 	case prefix + "help":
-		utils.SendChannelMessage(m.ChannelID, consts.Help+consts.MusicHelp)
+		utils.SendChannelMessage(m.ChannelID, help+musicHelp)
 	case prefix + "ping":
 		utils.SendChannelMessage(m.ChannelID, "Pong!")
 	case prefix + "card":
