@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"discordbot/src/consts"
 	"discordbot/src/utils"
 
 	"github.com/bwmarrin/discordgo"
@@ -38,7 +37,7 @@ func getInsult() string {
 	err = json.NewDecoder(res.Body).Decode(&insultObj) // Decoding data into struct object
 	if err != nil {
 		log.Println(err)
-		return consts.DecodingFailed
+		return "ERR: decoding data failed"
 	}
 
 	res.Body.Close() // Closing body to prevent resource leak

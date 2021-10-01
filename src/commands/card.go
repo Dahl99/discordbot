@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"discordbot/src/consts"
 	"discordbot/src/utils"
 
 	"github.com/bwmarrin/discordgo"
@@ -69,7 +68,7 @@ func getCard(n []string) string {
 	err = json.NewDecoder(res.Body).Decode(&card)
 	if err != nil {
 		log.Println(err)
-		return consts.DecodingFailed
+		return "ERR: decoding data failed"
 	}
 
 	res.Body.Close() // Closing body to prevent resource leak

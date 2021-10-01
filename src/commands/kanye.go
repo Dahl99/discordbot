@@ -27,7 +27,7 @@ func PostKanyeQuote(m *discordgo.MessageCreate) {
 func getKanyeQuote() string {
 	res, err := http.Get(kanyeRestEndpoint)
 	if err != nil {
-		log.Println("ERROR: kanye rest API get request failed")
+		log.Println(err)
 		return kanyeRestUnavailable
 	}
 
@@ -35,8 +35,8 @@ func getKanyeQuote() string {
 
 	err = json.NewDecoder(res.Body).Decode(&kanyeQuoteObj)
 	if err != nil {
-		log.Println("ERROR: decoding of kanye quote failed")
-		return kanyeRestUnavailable
+		log.Println(err)
+		return "ERR: decoding data failed"
 	}
 
 	res.Body.Close()

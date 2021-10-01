@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"discordbot/src/consts"
 	"discordbot/src/utils"
 
 	"github.com/bwmarrin/discordgo"
@@ -43,7 +42,7 @@ func getAdvice() string {
 	err = json.NewDecoder(res.Body).Decode(&slips)
 	if err != nil {
 		log.Println(err)
-		return consts.DecodingFailed
+		return "ERR: decoding data failed"
 	}
 	res.Body.Close() // Closing body to prevent resource leak
 
