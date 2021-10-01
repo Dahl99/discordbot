@@ -125,7 +125,7 @@ func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.
 	var videoRes videoResponse
 	err = json.NewDecoder(&out).Decode(&videoRes)
 	if err != nil {
-		log.Println("ERROR: error occured when decoding video response")
+		log.Println("ERROR: error occurred when decoding video response")
 		return
 	}
 
@@ -145,7 +145,7 @@ func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.
 		m.Author.ID,
 		videoId,
 		videoTitle,
-		videoRes.Formats[0].Url,
+		videoRes.Formats[2].Url,
 	}
 
 	// var song_struct PkgSong
