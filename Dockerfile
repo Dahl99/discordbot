@@ -41,4 +41,4 @@ COPY config.json ./
 COPY --from=builder /bin/app ./
 
 # Start app
-CMD ["./main"]
+CMD ["./app"]
