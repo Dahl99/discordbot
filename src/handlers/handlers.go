@@ -16,7 +16,7 @@ import (
 const help string = "```Current commands are:\n\tping\n\tcard <card name>\n\tdice <die sides>\n\tinsult\n\tadvice\n\tkanye"
 
 // musicHelp is a constant for info provided about music functionality in help command
-const musicHelp string = "\n\nMusic commands:\n\tjoin\n\tleave\n\tplay <youtube url/query>\n\tskip\n\tstop```"
+const musicHelp string = "\n\nMusic commands:\n\tplay <youtube url/query>\n\tleave\n\tskip\n\tstop```"
 
 func AddHandlers() {
 	// Register handlers as callbacks for the events.
@@ -73,12 +73,10 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		commands.PostAdvice(m)
 	case prefix + "kanye":
 		commands.PostKanyeQuote(m)
-	case prefix + "join":
-		music.JoinVoice(v, s, m)
+	case prefix + "play":
+		music.PlayMusic(cmd[1:], v, s, m)
 	case prefix + "leave":
 		music.LeaveVoice(v, m)
-	case prefix + "play":
-		music.PlayMusic(cmd[1:], v, m)
 	case prefix + "skip":
 		music.SkipMusic(v, m)
 	case prefix + "stop":

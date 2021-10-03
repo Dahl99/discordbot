@@ -20,12 +20,12 @@ func InitializeRoutine() {
 	go GlobalPlay(SongSignal)
 }
 
-func JoinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
+func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) *VoiceInstance {
 	voiceChannelID := utils.SearchVoiceChannel(m.Author.ID)
 	if voiceChannelID == "" {
 		log.Println("Voice channel id not found")
 		utils.SendChannelMessage(m.ChannelID, "[Music] You need to join a voice channel first!")
-		return
+		return nil
 	}
 
 	if v != nil {
@@ -44,13 +44,13 @@ func JoinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreat
 	v.voice, err = context.Dg.ChannelVoiceJoin(v.GuildID, voiceChannelID, false, true)
 	if err != nil {
 		v.Stop()
-		log.Println("Error when joining voice channel")
-		return
+		log.Println("ERR: Error when joining voice channel")
+		return nil
 	}
 
 	v.voice.Speaking(false)
-	log.Println("New voice instance created")
-	utils.SendChannelMessage(m.ChannelID, "[Music] Voice channel joined!")
+	log.Println("INFO: New voice instance created")
+	return v
 }
 
 func LeaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
@@ -71,11 +71,15 @@ func LeaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
 	utils.SendChannelMessage(m.ChannelID, "[Music] Voice channel left!")
 }
 
-func PlayMusic(n []string, v *VoiceInstance, m *discordgo.MessageCreate) {
+func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
 	if v == nil {
-		log.Println("INFO: The bot is not in a voice channel")
-		utils.SendChannelMessage(m.ChannelID, "[Music] I need to join a voice channel first!")
-		return
+		log.Println("INFO: The bot is not in a voice channel, joining now")
+		v = joinVoice(v, s, m)
+
+		if v == nil {
+			log.Println("ERR: Failed to join voice channel")
+			return
+		}
 	}
 
 	voiceChannelID := utils.SearchVoiceChannel(m.Author.ID)
