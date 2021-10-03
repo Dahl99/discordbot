@@ -2,5 +2,3 @@ version: '3.9'
 services:
   backend:
     build: .
-    volumes:
-      - .:/app
