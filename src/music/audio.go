@@ -46,7 +46,7 @@ var (
 	SongSignal     chan PkgSong
 )
 
-func GlobalPlay(songSig chan PkgSong) {
+func globalPlay(songSig chan PkgSong) {
 	for {
 		select {
 		case song := <-songSig:

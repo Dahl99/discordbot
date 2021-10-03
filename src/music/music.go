@@ -17,7 +17,7 @@ const ytVideoUrl string = "https://www.youtube.com/watch?v="
 
 func InitializeRoutine() {
 	SongSignal = make(chan PkgSong)
-	go GlobalPlay(SongSignal)
+	go globalPlay(SongSignal)
 }
 
 func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) *VoiceInstance {
