@@ -62,7 +62,7 @@ func LeaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
 	}
 
 	v.Stop()
-	time.Sleep(200 * time.Millisecond)
+	time.Sleep(150 * time.Millisecond)
 	v.voice.Disconnect()
 	log.Println("INFO: Voice channel left")
 	mutex.Lock()
