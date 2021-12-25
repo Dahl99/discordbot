@@ -35,7 +35,7 @@ RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/yout
 RUN chmod a+rx /usr/local/bin/youtube-dl
 
 # Copy config.json file
-COPY config.json ./
+COPY .env ./
 
 # Copy executable from builder
 COPY --from=builder /bin/app ./
