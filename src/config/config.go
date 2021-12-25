@@ -20,10 +20,10 @@ const APP_ENVIRONMENT_LOCAL = "LOCAL"
 const APP_ENVIRONMENT_TEST = "TEST"
 const APP_ENVIRONMENT_PRODUCTION = "PRODUCTION"
 
-// Config is a global struct object containing bot config
+// config contains all environment variables that should be included in .env
 var config *configuration
 
-// Load reads the data the bot needs from the provided JSON file
+// Load loads the environment variables from the .env file
 func Load() {
 	err := godotenv.Load()
 	if err != nil {
@@ -45,8 +45,14 @@ func GetAppEnvironment() string {
 }
 
 func IsAppEnvironment(environments ...string) bool {
+	if len(environments) == 0 {
+		return config.AppEnvironment == environments[0]
+	}
+
 	for _, environment := range environments {
-		return config.AppEnvironment == environment
+		if config.AppEnvironment == environment {
+			return true
+		}
 	}
 
 	return false
