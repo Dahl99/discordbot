@@ -66,7 +66,7 @@ func GetBotStatus() string {
 	return config.BotStatus
 }
 
-func GetGuildJoinMessage() string {
+func GetBotGuildJoinMessage() string {
 	return config.BotGuildJoinMessage
 }
 
