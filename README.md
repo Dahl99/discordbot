@@ -66,21 +66,25 @@ In order to run this project you will need the following:
    go mod download all
    ```
 
-7. Create the json file `config.json` in the root folder and add the following:
+7. Create the environment variables file `.env` in the root folder and add the following:
 
-    ```json
-    {
-      "token":"token goes here",
-      "prefix":"prefix goes here",
-      "status":"game status goes here",
-      "online":"online message goes here",
-      "ytkey":"youtube api key goes here"
-    }
+    ```dotenv
+    APP_ENVIRONMENT=LOCAL or TEST or PRODUCTION
+    BOT_PREFIX="Your prefix for bot commands"
+    BOT_STATUS="Your bot status message"
+    BOT_GUILD_JOIN_MESSAGE="Your bot guild join message"
+    DISCORD_TOKEN=Your discord token
+    YOUTUBE_KEY=Your youtube key
     ```
 
 ## Usage
 
 To run the discord bot from root directory, execute the following command
+```shell
+go run main.go
+```
+
+Or to start the docker containers using docker compose V2
 
 ```sh
 docker compose up
