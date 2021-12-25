@@ -1,51 +1,73 @@
 package config
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type configuration struct {
-	Token  string
-	Prefix string
-	Status string
-	Online string
-	Ytkey  string
+	AppEnvironment      string
+	BotPrefix           string
+	BotStatus           string
+	BotGuildJoinMessage string
+	DiscordToken        string
+	YoutubeKey          string
 }
+
+const APP_ENVIRONMENT_LOCAL = "LOCAL"
+const APP_ENVIRONMENT_TEST = "TEST"
+const APP_ENVIRONMENT_PRODUCTION = "PRODUCTION"
 
 // Config is a global struct object containing bot config
 var config *configuration
 
-func GetDiscordToken() string {
-	return config.Token
+// Load reads the data the bot needs from the provided JSON file
+func Load() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalln("Error loading .env file")
+	}
+
+	config = &configuration{
+		AppEnvironment:      os.Getenv("APP_ENVIRONMENT"),
+		BotPrefix:           os.Getenv("BOT_PREFIX"),
+		BotStatus:           os.Getenv("BOT_STATUS"),
+		BotGuildJoinMessage: os.Getenv("BOT_GUILD_JOIN_MESSAGE"),
+		DiscordToken:        os.Getenv("DISCORD_TOKEN"),
+		YoutubeKey:          os.Getenv("YOUTUBE_KEY"),
+	}
+}
+
+func GetAppEnvironment() string {
+	return config.AppEnvironment
+}
+
+func IsAppEnvironment(environments ...string) bool {
+	for _, environment := range environments {
+		return config.AppEnvironment == environment
+	}
+
+	return false
 }
 
 func GetPrefix() string {
-	return config.Prefix
+	return config.BotPrefix
 }
 
 func GetStatusText() string {
-	return config.Status
+	return config.BotStatus
 }
 
-func GetOnlineText() string {
-	return config.Online
+func GetGuildJoinMessage() string {
+	return config.BotGuildJoinMessage
 }
 
-func GetYtKey() string {
-	return config.Ytkey
+func GetDiscordToken() string {
+	return config.DiscordToken
 }
 
-// Load reads the data the bot needs from the provided JSON file
-func Load() {
-	res, err := ioutil.ReadFile("./config.json")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	err = json.Unmarshal(res, &config)
-	if err != nil {
-		log.Fatalln(err)
-	}
+func GetYoutubeKey() string {
+	return config.YoutubeKey
 }
