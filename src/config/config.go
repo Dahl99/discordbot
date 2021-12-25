@@ -58,11 +58,11 @@ func IsAppEnvironment(environments ...string) bool {
 	return false
 }
 
-func GetPrefix() string {
+func GetBotPrefix() string {
 	return config.BotPrefix
 }
 
-func GetStatusText() string {
+func GetBotStatus() string {
 	return config.BotStatus
 }
 
