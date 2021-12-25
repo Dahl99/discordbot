@@ -16,9 +16,9 @@ type configuration struct {
 	YoutubeKey          string
 }
 
-const APP_ENVIRONMENT_LOCAL = "LOCAL"
-const APP_ENVIRONMENT_TEST = "TEST"
-const APP_ENVIRONMENT_PRODUCTION = "PRODUCTION"
+const APP_ENVIRONMENT_LOCAL string = "LOCAL"
+const APP_ENVIRONMENT_TEST string = "TEST"
+const APP_ENVIRONMENT_PRODUCTION string = "PRODUCTION"
 
 // config contains all environment variables that should be included in .env
 var config *configuration
