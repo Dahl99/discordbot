@@ -8,7 +8,6 @@ import (
 )
 
 func Start() {
-	config.Load()
 	context.Initialize(config.GetDiscordToken())
 	handlers.AddHandlers()
 	context.OpenConnection()

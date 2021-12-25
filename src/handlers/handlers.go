@@ -29,7 +29,7 @@ func AddHandlers() {
 func ReadyHandler(s *discordgo.Session, event *discordgo.Ready) {
 
 	// Set the playing status.
-	s.UpdateGameStatus(0, config.GetStatusText())
+	s.UpdateGameStatus(0, config.GetBotStatus())
 }
 
 // GuildCreateHandler will be called every time a new guild is joined.
@@ -41,7 +41,7 @@ func GuildCreateHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
 
 	for _, channel := range event.Guild.Channels {
 		if channel.ID == event.Guild.ID {
-			s.ChannelMessageSend(channel.ID, config.GetOnlineText())
+			s.ChannelMessageSend(channel.ID, config.GetBotGuildJoinMessage())
 			return
 		}
 	}
@@ -53,7 +53,7 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	prefix := config.GetPrefix()
+	prefix := config.GetBotPrefix()
 	guildID := utils.SearchGuild(m.ChannelID)
 	v := music.VoiceInstances[guildID]
 	cmd := strings.Split(m.Content, " ") //	Splitting command into string slice

@@ -1,51 +1,79 @@
 package config
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type configuration struct {
-	Token  string
-	Prefix string
-	Status string
-	Online string
-	Ytkey  string
+	AppEnvironment      string
+	BotPrefix           string
+	BotStatus           string
+	BotGuildJoinMessage string
+	DiscordToken        string
+	YoutubeKey          string
 }
 
-// Config is a global struct object containing bot config
+const APP_ENVIRONMENT_LOCAL string = "LOCAL"
+const APP_ENVIRONMENT_TEST string = "TEST"
+const APP_ENVIRONMENT_PRODUCTION string = "PRODUCTION"
+
+// config contains all environment variables that should be included in .env
 var config *configuration
 
-func GetDiscordToken() string {
-	return config.Token
-}
-
-func GetPrefix() string {
-	return config.Prefix
-}
-
-func GetStatusText() string {
-	return config.Status
-}
-
-func GetOnlineText() string {
-	return config.Online
-}
-
-func GetYtKey() string {
-	return config.Ytkey
-}
-
-// Load reads the data the bot needs from the provided JSON file
+// Load loads the environment variables from the .env file
 func Load() {
-	res, err := ioutil.ReadFile("./config.json")
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("Error loading .env file")
 	}
 
-	err = json.Unmarshal(res, &config)
-	if err != nil {
-		log.Fatalln(err)
+	config = &configuration{
+		AppEnvironment:      os.Getenv("APP_ENVIRONMENT"),
+		BotPrefix:           os.Getenv("BOT_PREFIX"),
+		BotStatus:           os.Getenv("BOT_STATUS"),
+		BotGuildJoinMessage: os.Getenv("BOT_GUILD_JOIN_MESSAGE"),
+		DiscordToken:        os.Getenv("DISCORD_TOKEN"),
+		YoutubeKey:          os.Getenv("YOUTUBE_KEY"),
 	}
+}
+
+func GetAppEnvironment() string {
+	return config.AppEnvironment
+}
+
+func IsAppEnvironment(environments ...string) bool {
+	if len(environments) == 0 {
+		return config.AppEnvironment == environments[0]
+	}
+
+	for _, environment := range environments {
+		if config.AppEnvironment == environment {
+			return true
+		}
+	}
+
+	return false
+}
+
+func GetBotPrefix() string {
+	return config.BotPrefix
+}
+
+func GetBotStatus() string {
+	return config.BotStatus
+}
+
+func GetBotGuildJoinMessage() string {
+	return config.BotGuildJoinMessage
+}
+
+func GetDiscordToken() string {
+	return config.DiscordToken
+}
+
+func GetYoutubeKey() string {
+	return config.YoutubeKey
 }

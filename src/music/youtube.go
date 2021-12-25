@@ -55,7 +55,7 @@ type itemsFind struct {
 
 func ytSearch(name string) (string, string, error) {
 
-	res, err := http.Get(youtubeSearchEndpoint + config.GetYtKey() + "&q=" + name)
+	res, err := http.Get(youtubeSearchEndpoint + config.GetYoutubeKey() + "&q=" + name)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
 		return "", "", err
@@ -83,7 +83,7 @@ func ytSearch(name string) (string, string, error) {
 }
 
 func ytFind(videoId string) (string, error) {
-	res, err := http.Get(youtubeFindEndpoint + config.GetYtKey() + "&id=" + videoId)
+	res, err := http.Get(youtubeFindEndpoint + config.GetYoutubeKey() + "&id=" + videoId)
 	if err != nil {
 		log.Println(http.StatusServiceUnavailable)
 		return "", err

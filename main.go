@@ -7,9 +7,16 @@ import (
 	"syscall"
 
 	"discordbot/src/bot"
+	"discordbot/src/config"
 )
 
 func main() {
+
+	config.Load()
+	if config.IsAppEnvironment(config.APP_ENVIRONMENT_TEST) {
+		fmt.Println("App environment is test, aborting startup")
+		return
+	}
 
 	bot.Start()
 
