@@ -4,6 +4,11 @@ FROM golang:1.17.1 AS builder
 # Set working directory
 WORKDIR /src
 
+# Update and install apt dependencies
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -q -y \
+    stockfish
+
 # Copy go module files
 COPY go.mod go.sum ./
 
@@ -25,11 +30,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -q -y \
     curl \
     python3 \
-    ffmpeg \
-    stockfish
-
-#RUN export PATH=/usr/games:$PATH
-ENV PATH /usr/games:$PATH
+    ffmpeg
 
 # Symlink python3 to python
 RUN ln -s /usr/bin/python3 /usr/bin/python
@@ -37,6 +38,10 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 # Download youtube-dl and chmod correct permissions
 RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
 RUN chmod a+rx /usr/local/bin/youtube-dl
+
+# Copy stockfish from builder and add to path
+COPY --from=builder /usr/games/stockfish /usr/games
+ENV PATH /usr/games:$PATH
 
 # Copy config.json file
 COPY .env ./
