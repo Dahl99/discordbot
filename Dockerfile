@@ -1,5 +1,5 @@
 # Builder container
-FROM golang:1.17.1 AS builder
+FROM golang:1.17.5 AS builder
 
 # Set working directory
 WORKDIR /src
