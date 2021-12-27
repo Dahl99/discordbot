@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"discordbot/src/commands"
+	"discordbot/src/commands/chess"
 	"discordbot/src/config"
 	"discordbot/src/context"
 	"discordbot/src/music"
@@ -81,6 +82,8 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		music.SkipMusic(v, m)
 	case prefix + "stop":
 		music.StopMusic(v, m)
+	case prefix + "chess":
+		chess.Menu(cmd[1:], s, m)
 	default:
 		return
 	}

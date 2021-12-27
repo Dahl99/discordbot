@@ -15,7 +15,7 @@ COPY . ./
 RUN go build -v -o /bin/app ./*.go
 
 # Production container
-FROM debian:bullseye-slim
+FROM debian:bullseye-slim AS final
 
 # Set working directory
 WORKDIR /app
@@ -25,7 +25,11 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -q -y \
     curl \
     python3 \
-    ffmpeg
+    ffmpeg \
+    stockfish
+
+#RUN export PATH=/usr/games:$PATH
+ENV PATH /usr/games:$PATH
 
 # Symlink python3 to python
 RUN ln -s /usr/bin/python3 /usr/bin/python
