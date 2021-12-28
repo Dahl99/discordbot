@@ -44,8 +44,6 @@ func createNewGame(index int, channelID string, botID string) {
 
 	var session chessSession
 	session.game = chess.NewGame()
-	log.Println("Creating new game: " + session.game.String())
-
 	session.model = &models.ChessGame{
 		GuildID:     challenge.guildID,
 		PlayerWhite: playerWhite,
@@ -56,27 +54,19 @@ func createNewGame(index int, channelID string, botID string) {
 
 	database.DB.Create(session.model)
 
-	if playerWhite == botID {
+	if session.isAiPlayerWhite(botID) {
 		utils.SendChannelMessage(channelID, "**[Chess]** Game has started, <@"+botID+"> is moving the first piece!")
-		aiMove := getAiMove(&session)
-		session.game.MoveStr(aiMove)
-		session.model.BoardState = session.game.String()
-		session.model.GameState = models.TurnBlack
+		session.aiMovePiece()
 		session.model.Update()
-
 	} else {
 		utils.SendChannelMessage(channelID, "**[Chess]** Game has been started, <@"+playerWhite+"> move the first piece!")
 	}
 
-	png := saveChessBoardToPng(&session)
-	if png != "" {
-		utils.SendChannelFile(channelID, png, "board.png")
-	}
-	exec.Command("rm", png).Run()
+	session.sendChannelChessBoard(channelID)
 }
 
-func saveChessBoardToPng(session *chessSession) string {
-	filepath := session.model.GuildID + "-" + strconv.FormatInt(session.model.CreatedAt, 10)
+func (s *chessSession) saveChessBoardToPng() string {
+	filepath := s.model.GuildID + "-" + strconv.FormatInt(s.model.CreatedAt, 10)
 	f, err := os.Create(filepath)
 	if err != nil {
 		log.Fatal(err)
@@ -85,7 +75,7 @@ func saveChessBoardToPng(session *chessSession) string {
 	defer f.Close()
 
 	// create board position
-	fenStr := session.game.FEN()
+	fenStr := s.game.FEN()
 	pos := &chess.Position{}
 	if err := pos.UnmarshalText([]byte(fenStr)); err != nil {
 		log.Fatal(err)
@@ -105,4 +95,24 @@ func saveChessBoardToPng(session *chessSession) string {
 	}
 
 	return pngName
+}
+
+func (s *chessSession) updateGameState() {
+	if s.model.GameState == models.TurnWhite {
+		s.model.GameState = models.TurnBlack
+	} else {
+		s.model.GameState = models.TurnWhite
+	}
+}
+
+func (s *chessSession) updateBoardState() {
+	s.model.BoardState = s.game.String()
+}
+
+func (s *chessSession) sendChannelChessBoard(channelID string) {
+	png := s.saveChessBoardToPng()
+	if png != "" {
+		utils.SendChannelFile(channelID, png, "board.png")
+	}
+	exec.Command("rm", png).Run()
 }

@@ -2,7 +2,6 @@ package chess
 
 import (
 	"log"
-	"os/exec"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -73,38 +72,27 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 	pgn, err := chess.PGN(pgnReader)
 	if err != nil {
 		log.Println("ERR: PGN creation failed")
+		utils.SendChannelMessage(m.ChannelID, "**[Chess]** Oops, something went wrong. Please try again.")
+		return
 	}
 
 	session.game = chess.NewGame(pgn)
 	err = session.game.MoveStr(move)
 	if err != nil {
 		log.Println(err)
+		utils.SendChannelMessage(m.ChannelID, "**[Chess]** <@"+m.Author.ID+">Invalid move! Remember to use algebraic notation!")
+		return
 	}
 
-	if session.model.GameState == models.TurnWhite {
-		session.model.GameState = models.TurnBlack
-	} else {
-		session.model.GameState = models.TurnWhite
+	session.updateBoardState()
+	session.updateGameState()
+	session.sendChannelChessBoard(m.ChannelID)
+
+	if session.isAiTurn(botID) {
+		utils.SendChannelMessage(m.ChannelID, "**[Chess]** <@"+botID+"> is thinking about the next move!")
+		session.aiMovePiece()
 	}
 
-	if session.model.GameState == models.TurnBlack && session.model.PlayerBlack == botID {
-		aiMove := getAiMove(&session)
-		session.game.MoveStr(aiMove)
-		session.model.GameState = models.TurnWhite
-	}
-
-	if session.model.GameState == models.TurnWhite && session.model.PlayerWhite == botID {
-		aiMove := getAiMove(&session)
-		session.game.MoveStr(aiMove)
-		session.model.GameState = models.TurnBlack
-	}
-
-	session.model.BoardState = session.game.String()
+	session.sendChannelChessBoard(m.ChannelID)
 	session.model.Update()
-
-	png := saveChessBoardToPng(&session)
-	if png != "" {
-		utils.SendChannelFile(m.ChannelID, png, "board.png")
-	}
-	exec.Command("rm", png).Run()
 }
