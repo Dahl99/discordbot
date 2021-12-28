@@ -47,8 +47,6 @@ func SendChannelFile(channelID string, filepath string, name string) {
 }
 
 func SVGtoPNG(filepath string, name string) {
-	w, h := 256, 256
-
 	in, err := os.Open(filepath)
 	if err != nil {
 		panic(err)
@@ -56,6 +54,8 @@ func SVGtoPNG(filepath string, name string) {
 	defer in.Close()
 
 	icon, _ := oksvg.ReadIconStream(in)
+	w := int(icon.ViewBox.W)
+	h := int(icon.ViewBox.H)
 	icon.SetTarget(0, 0, float64(w), float64(h))
 	rgba := image.NewRGBA(image.Rect(0, 0, w, h))
 	icon.Draw(rasterx.NewDasher(w, h, rasterx.NewScannerGV(w, h, rgba, rgba.Bounds())), 1)

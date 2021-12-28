@@ -22,23 +22,17 @@ func StopChessAi() {
 	eng.Close()
 }
 
-func aiMovePiece(session *chessSession) *chessSession {
+func getAiMove(session *chessSession) string {
 	if err := eng.Run(uci.CmdUCI, uci.CmdIsReady, uci.CmdUCINewGame); err != nil {
 		log.Println(err)
 	}
 
 	cmdPos := uci.CmdPosition{Position: session.game.Position()}
-	cmdGo := uci.CmdGo{MoveTime: time.Second / 150}
+	cmdGo := uci.CmdGo{MoveTime: time.Second * 10}
 
 	if err := eng.Run(cmdPos, cmdGo); err != nil {
 		log.Println(err)
 	}
 
-	move := eng.SearchResults().BestMove
-	session.game.MoveStr(move.String())
-
-	session.model.BoardState = session.game.String()
-	session.model.Update()
-
-	return session
+	return eng.SearchResults().BestMove.String()
 }

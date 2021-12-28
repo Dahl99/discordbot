@@ -74,29 +74,35 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 		log.Println("ERR: PGN creation failed")
 	}
 
-	session.game = chess.NewGame(pgn, chess.UseNotation(chess.AlgebraicNotation{}))
+	session.game = chess.NewGame(pgn)
 	err = session.game.MoveStr(move)
 	if err != nil {
 		log.Println(err)
 	}
 
-	filepath := saveChessBoardToImage(&session)
-	if filepath != "" {
-		utils.SendChannelFile(m.ChannelID, filepath, "board.svg")
+	if session.model.GameState == models.TurnWhite {
+		session.model.GameState = models.TurnBlack
+	} else {
+		session.model.GameState = models.TurnWhite
 	}
 
 	if session.model.GameState == models.TurnBlack && session.model.PlayerBlack == botID {
-		aiMovePiece(&session)
+		aiMove := getAiMove(&session)
+		session.game.MoveStr(aiMove)
+		session.model.GameState = models.TurnWhite
 	}
 
 	if session.model.GameState == models.TurnWhite && session.model.PlayerWhite == botID {
-		aiMovePiece(&session)
+		aiMove := getAiMove(&session)
+		session.game.MoveStr(aiMove)
+		session.model.GameState = models.TurnBlack
 	}
 
+	session.model.BoardState = session.game.String()
 	session.model.Update()
 
-	filepath = saveChessBoardToImage(&session)
+	filepath := saveChessBoardToPng(&session)
 	if filepath != "" {
-		utils.SendChannelFile(m.ChannelID, filepath, "board.svg")
+		utils.SendChannelFile(m.ChannelID, filepath, "board.png")
 	}
 }

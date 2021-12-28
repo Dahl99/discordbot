@@ -33,8 +33,7 @@ func createNewGame(index int, channelID string, botID string) {
 
 	var playerWhite string
 	var playerBlack string
-	roll := rand.Intn(1)
-	if roll == 0 {
+	if rand.Intn(1) == 0 {
 		playerWhite = challenge.challenger
 		playerBlack = challenge.opponent
 	} else {
@@ -44,6 +43,8 @@ func createNewGame(index int, channelID string, botID string) {
 
 	var session chessSession
 	session.game = chess.NewGame()
+	log.Println("Creating new game: " + session.game.String())
+
 	session.model = &models.ChessGame{
 		GuildID:     challenge.guildID,
 		PlayerWhite: playerWhite,
@@ -56,24 +57,28 @@ func createNewGame(index int, channelID string, botID string) {
 
 	if playerWhite == botID {
 		utils.SendChannelMessage(channelID, "**[Chess]** Game has started, <@"+botID+"> is moving the first piece!")
-		session = *aiMovePiece(&session)
+		aiMove := getAiMove(&session)
+		session.game.MoveStr(aiMove)
+		session.model.BoardState = session.game.String()
+		session.model.GameState = models.TurnBlack
+		session.model.Update()
 
-		filepath := saveChessBoardToImage(&session)
+		filepath := saveChessBoardToPng(&session)
 		if filepath != "" {
 			utils.SendChannelFile(channelID, filepath, "index.png")
 		}
 
 	} else {
 		utils.SendChannelMessage(channelID, "**[Chess]** Game has been started, <@"+playerWhite+"> move the first piece!")
-		filepath := saveChessBoardToImage(&session)
+		filepath := saveChessBoardToPng(&session)
 		if filepath != "" {
 			utils.SendChannelFile(channelID, filepath, "index.png")
 		}
 	}
 }
 
-func saveChessBoardToImage(session *chessSession) string {
-	filepath := session.model.GuildID + strconv.FormatInt(session.model.CreatedAt, 10)
+func saveChessBoardToPng(session *chessSession) string {
+	filepath := session.model.GuildID + "-" + strconv.FormatInt(session.model.CreatedAt, 10)
 	f, err := os.Create(filepath)
 	if err != nil {
 		log.Fatal(err)

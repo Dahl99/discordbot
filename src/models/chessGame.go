@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"database/sql/driver"
-	"fmt"
 
 	"discordbot/src/database"
 )
@@ -38,6 +37,5 @@ type ChessGame struct {
 }
 
 func (c *ChessGame) Update() {
-	fmt.Println("Updating game in database")
 	database.DB.Save(&c)
 }
