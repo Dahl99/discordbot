@@ -2,6 +2,7 @@ package chess
 
 import (
 	"log"
+	"os/exec"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -101,8 +102,9 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 	session.model.BoardState = session.game.String()
 	session.model.Update()
 
-	filepath := saveChessBoardToPng(&session)
-	if filepath != "" {
-		utils.SendChannelFile(m.ChannelID, filepath, "board.png")
+	png := saveChessBoardToPng(&session)
+	if png != "" {
+		utils.SendChannelFile(m.ChannelID, png, "board.png")
 	}
+	exec.Command("rm", png).Run()
 }

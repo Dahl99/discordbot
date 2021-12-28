@@ -4,6 +4,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 
@@ -63,18 +64,15 @@ func createNewGame(index int, channelID string, botID string) {
 		session.model.GameState = models.TurnBlack
 		session.model.Update()
 
-		filepath := saveChessBoardToPng(&session)
-		if filepath != "" {
-			utils.SendChannelFile(channelID, filepath, "index.png")
-		}
-
 	} else {
 		utils.SendChannelMessage(channelID, "**[Chess]** Game has been started, <@"+playerWhite+"> move the first piece!")
-		filepath := saveChessBoardToPng(&session)
-		if filepath != "" {
-			utils.SendChannelFile(channelID, filepath, "index.png")
-		}
 	}
+
+	png := saveChessBoardToPng(&session)
+	if png != "" {
+		utils.SendChannelFile(channelID, png, "board.png")
+	}
+	exec.Command("rm", png).Run()
 }
 
 func saveChessBoardToPng(session *chessSession) string {
@@ -100,7 +98,11 @@ func saveChessBoardToPng(session *chessSession) string {
 	}
 
 	pngName := strings.TrimRight(filepath, ".svg") + ".png"
-	utils.SVGtoPNG(filepath, pngName)
+
+	err = exec.Command("inkscape", "-w", "360", "-h", "360", filepath, "-o", pngName).Run()
+	if err != nil {
+		return ""
+	}
 
 	return pngName
 }

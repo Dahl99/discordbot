@@ -1,13 +1,8 @@
 package utils
 
 import (
-	"image"
-	"image/png"
 	"log"
 	"os"
-
-	"github.com/srwiley/oksvg"
-	"github.com/srwiley/rasterx"
 
 	"discordbot/src/context"
 )
@@ -44,30 +39,4 @@ func SendChannelFile(channelID string, filepath string, name string) {
 	}
 
 	context.Dg.ChannelFileSend(channelID, name, reader)
-}
-
-func SVGtoPNG(filepath string, name string) {
-	in, err := os.Open(filepath)
-	if err != nil {
-		panic(err)
-	}
-	defer in.Close()
-
-	icon, _ := oksvg.ReadIconStream(in)
-	w := int(icon.ViewBox.W)
-	h := int(icon.ViewBox.H)
-	icon.SetTarget(0, 0, float64(w), float64(h))
-	rgba := image.NewRGBA(image.Rect(0, 0, w, h))
-	icon.Draw(rasterx.NewDasher(w, h, rasterx.NewScannerGV(w, h, rgba, rgba.Bounds())), 1)
-
-	out, err := os.Create(name)
-	if err != nil {
-		panic(err)
-	}
-	defer out.Close()
-
-	err = png.Encode(out, rgba)
-	if err != nil {
-		panic(err)
-	}
 }

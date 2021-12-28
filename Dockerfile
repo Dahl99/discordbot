@@ -30,7 +30,8 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -q -y \
     curl \
     python3 \
-    ffmpeg
+    ffmpeg \
+    inkscape
 
 # Symlink python3 to python
 RUN ln -s /usr/bin/python3 /usr/bin/python
