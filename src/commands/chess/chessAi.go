@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/notnil/chess"
 	"github.com/notnil/chess/uci"
 
 	"discordbot/src/models"
@@ -24,7 +25,7 @@ func StopChessAi() {
 	eng.Close()
 }
 
-func (s *chessSession) getAiMove() string {
+func (s *chessSession) getAiMove() *chess.Move {
 	if err := eng.Run(uci.CmdUCI, uci.CmdIsReady, uci.CmdUCINewGame); err != nil {
 		log.Println(err)
 	}
@@ -36,7 +37,7 @@ func (s *chessSession) getAiMove() string {
 		log.Println(err)
 	}
 
-	return eng.SearchResults().BestMove.String()
+	return eng.SearchResults().BestMove
 }
 
 func (s *chessSession) isAiTurn(botID string) bool {
@@ -67,9 +68,8 @@ func (s *chessSession) isAiPlayerBlack(botID string) bool {
 
 func (s *chessSession) aiMovePiece() {
 	aiMove := s.getAiMove()
-	err := s.game.MoveStr(aiMove)
-	if err != nil {
-		log.Println(err)
+	if err := s.game.Move(aiMove); err != nil {
+		log.Println("ERR: AI move failed: " + err.Error())
 		return
 	}
 
