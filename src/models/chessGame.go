@@ -3,6 +3,9 @@ package models
 import (
 	"database/sql"
 	"database/sql/driver"
+	"fmt"
+
+	"discordbot/src/database"
 )
 
 type GameState string
@@ -32,4 +35,9 @@ type ChessGame struct {
 	GameState   GameState `json:"game-state" gorm:"type:ENUM('WON_WHITE', 'WON_BLACK', 'TURN_WHITE', 'TURN_BLACK');default:'TURN_WHITE';not null"`
 	CreatedAt   int64     `json:"created-at" gorm:"not null"`
 	DeletedAt   sql.NullInt64
+}
+
+func (c *ChessGame) Update() {
+	fmt.Println("Updating game in database")
+	database.DB.Save(&c)
 }

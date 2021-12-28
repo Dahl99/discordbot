@@ -1,10 +1,14 @@
 package chess
 
 import (
+	"log"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/notnil/chess"
 
+	"discordbot/src/database"
+	"discordbot/src/models"
 	"discordbot/src/utils"
 )
 
@@ -13,9 +17,9 @@ func Menu(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 	case "challenge":
 		challengePlayer(s, m, cmd[1])
 	case "accept":
-		accept(m.ID, m.GuildID, m.ChannelID)
-	case "mode":
-		movePiece(m, cmd[1])
+		accept(m.ID, m.GuildID, m.ChannelID, s.State.User.ID)
+	case "move":
+		movePiece(m, cmd[1], s.State.User.ID)
 	default:
 		return
 	}
@@ -38,15 +42,61 @@ func challengePlayer(s *discordgo.Session, challenger *discordgo.MessageCreate, 
 	challenges = append(challenges, challenge)
 
 	if opponentID == s.State.User.ID {
-		accept(s.State.User.ID, challenger.GuildID, challenger.ChannelID)
+		accept(s.State.User.ID, challenger.GuildID, challenger.ChannelID, s.State.User.ID)
 	}
 }
 
-func accept(userID string, guildID string, channelID string) {
+func accept(userID string, guildID string, channelID string, botID string) {
 	for index, challenge := range challenges {
 		if userID == challenge.opponent && guildID == challenge.guildID {
-			createNewGame(index, channelID)
-			utils.SendChannelMessage(channelID, "**[Chess]** Challenge accepted, starting new game")
+			createNewGame(index, channelID, botID)
 		}
+	}
+}
+
+func movePiece(m *discordgo.MessageCreate, move string, botID string) {
+	var session chessSession
+
+	database.DB.Raw(
+		"SELECT * "+
+			"FROM chess_games "+
+			"WHERE guild_id = ? && (player_white = ? || player_black = ?)",
+		m.GuildID, m.Author.ID, m.Author.ID).Scan(&session.model)
+
+	if !(session.model.GameState == models.TurnBlack && session.model.PlayerBlack == m.Author.ID) &&
+		!(session.model.GameState == models.TurnWhite && session.model.PlayerWhite == m.Author.ID) {
+		return
+	}
+
+	pgnReader := strings.NewReader(session.model.BoardState)
+	pgn, err := chess.PGN(pgnReader)
+	if err != nil {
+		log.Println("ERR: PGN creation failed")
+	}
+
+	session.game = chess.NewGame(pgn, chess.UseNotation(chess.AlgebraicNotation{}))
+	err = session.game.MoveStr(move)
+	if err != nil {
+		log.Println(err)
+	}
+
+	filepath := saveChessBoardToImage(&session)
+	if filepath != "" {
+		utils.SendChannelFile(m.ChannelID, filepath, "board.svg")
+	}
+
+	if session.model.GameState == models.TurnBlack && session.model.PlayerBlack == botID {
+		aiMovePiece(&session)
+	}
+
+	if session.model.GameState == models.TurnWhite && session.model.PlayerWhite == botID {
+		aiMovePiece(&session)
+	}
+
+	session.model.Update()
+
+	filepath = saveChessBoardToImage(&session)
+	if filepath != "" {
+		utils.SendChannelFile(m.ChannelID, filepath, "board.svg")
 	}
 }

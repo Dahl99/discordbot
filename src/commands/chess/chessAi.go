@@ -4,7 +4,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/notnil/chess"
 	"github.com/notnil/chess/uci"
 )
 
@@ -23,19 +22,23 @@ func StopChessAi() {
 	eng.Close()
 }
 
-func aiMove(game *chess.Game) string {
+func aiMovePiece(session *chessSession) *chessSession {
 	if err := eng.Run(uci.CmdUCI, uci.CmdIsReady, uci.CmdUCINewGame); err != nil {
 		log.Println(err)
 	}
 
-	cmdPos := uci.CmdPosition{Position: game.Position()}
-	cmdGo := uci.CmdGo{MoveTime: time.Second / 100}
+	cmdPos := uci.CmdPosition{Position: session.game.Position()}
+	cmdGo := uci.CmdGo{MoveTime: time.Second / 150}
 
 	if err := eng.Run(cmdPos, cmdGo); err != nil {
 		log.Println(err)
 	}
 
 	move := eng.SearchResults().BestMove
+	session.game.MoveStr(move.String())
 
-	return move.String()
+	session.model.BoardState = session.game.String()
+	session.model.Update()
+
+	return session
 }

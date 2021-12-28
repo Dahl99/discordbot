@@ -9,6 +9,7 @@ import (
 	"discordbot/src/bot"
 	"discordbot/src/config"
 	"discordbot/src/database"
+	"discordbot/src/database/migrations"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 	}
 
 	database.Connect()
-	database.AutoMigrate()
+	migrations.AutoMigrate()
 
 	bot.Start()
 
