@@ -26,6 +26,16 @@ func Menu(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 }
 
 func challengePlayer(s *discordgo.Session, challenger *discordgo.MessageCreate, opponent string) {
+	var count int
+	database.DB.Raw(
+		"SELECT IFNULL((SELECT COUNT(id) FROM chess_games WHERE player_white = ? || player_black = ?), 0) FROM chess_games",
+		challenger.Author.ID, challenger.Author.ID).Scan(&count)
+
+	if count > 0 {
+		utils.SendChannelMessage(challenger.ChannelID, "**[Chess]** <@"+challenger.Author.ID+"> You already have a game in progress!")
+		return
+	}
+
 	utils.SendChannelMessage(challenger.ChannelID, "**[Chess]** "+opponent+
 		" you have been challenged to a game by <@"+challenger.Author.ID+"> do you accept?")
 
@@ -56,11 +66,11 @@ func accept(userID string, guildID string, channelID string, botID string) {
 
 func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 	var session chessSession
-
 	database.DB.Raw(
 		"SELECT * "+
 			"FROM chess_games "+
-			"WHERE guild_id = ? && (player_white = ? || player_black = ?)",
+			"WHERE guild_id = ? && (player_white = ? || player_black = ?)"+
+			"LIMIT 1",
 		m.GuildID, m.Author.ID, m.Author.ID).Scan(&session.model)
 
 	if !(session.model.GameState == models.TurnBlack && session.model.PlayerBlack == m.Author.ID) &&
@@ -86,13 +96,14 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 
 	session.updateBoardState()
 	session.updateGameState()
+	session.model.Update()
 	session.sendChannelChessBoard(m.ChannelID)
 
 	if session.isAiTurn(botID) {
 		utils.SendChannelMessage(m.ChannelID, "**[Chess]** <@"+botID+"> is thinking about the next move!")
 		session.aiMovePiece()
+		session.model.Update()
+		utils.SendChannelMessage(m.ChannelID, "**[Chess]** <@"+m.Author.ID+"> Your turn to move a piece!")
+		session.sendChannelChessBoard(m.ChannelID)
 	}
-
-	session.sendChannelChessBoard(m.ChannelID)
-	session.model.Update()
 }
