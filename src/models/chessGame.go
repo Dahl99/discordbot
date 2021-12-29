@@ -42,3 +42,7 @@ type ChessGame struct {
 func (c *ChessGame) UpdateStates() {
 	database.DB.Model(&c).Select("board_state", "game_state").Updates(ChessGame{BoardState: c.BoardState, GameState: c.GameState})
 }
+
+func (c *ChessGame) UpdateGameState(gameState GameState) {
+	database.DB.Model(&c).Update("game_state", gameState)
+}

@@ -22,6 +22,8 @@ func Menu(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 		decline(m)
 	case "move":
 		movePiece(m, cmd[1], s.State.User.ID)
+	case "resign":
+		resign(m)
 	default:
 		return
 	}
@@ -92,6 +94,16 @@ func decline(m *discordgo.MessageCreate) {
 }
 
 func movePiece(m *discordgo.MessageCreate, move string, botID string) {
+	var count int
+	database.DB.Raw(
+		"SELECT IFNULL((SELECT COUNT(id) FROM chess_games WHERE player_white = ? OR player_black = ?), 0) "+
+			"FROM chess_games WHERE deleted_at IS NULL",
+		m.Author.ID, m.Author.ID).Scan(&count)
+
+	if count == 0 {
+		return
+	}
+
 	var session chessSession
 	database.DB.Raw(
 		"SELECT * "+
@@ -147,4 +159,33 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 		utils.SendChannelMessage(m.ChannelID, "**[Chess]** <@"+m.Author.ID+"> Your turn to move a piece!")
 		session.sendChannelChessBoard(m.ChannelID)
 	}
+}
+
+func resign(m *discordgo.MessageCreate) {
+	var count int
+	database.DB.Raw(
+		"SELECT IFNULL((SELECT COUNT(id) FROM chess_games WHERE player_white = ? OR player_black = ?), 0) "+
+			"FROM chess_games WHERE deleted_at IS NULL",
+		m.Author.ID, m.Author.ID).Scan(&count)
+
+	if count == 0 {
+		return
+	}
+
+	var game models.ChessGame
+	database.DB.Raw(
+		"SELECT * "+
+			"FROM chess_games "+
+			"WHERE guild_id = ? AND (player_white = ? OR player_black = ?) AND deleted_at IS NULL "+
+			"LIMIT 1",
+		m.GuildID, m.Author.ID, m.Author.ID).Scan(&game)
+
+	if m.Author.ID == game.PlayerWhite {
+		game.UpdateGameState(models.WonBlack)
+	} else {
+		game.UpdateGameState(models.WonBlack)
+	}
+
+	database.DB.Delete(game)
+	utils.SendChannelMessage(m.ChannelID, "**[Chess]** <@"+m.Author.ID+"> has resigned from the game :(")
 }
