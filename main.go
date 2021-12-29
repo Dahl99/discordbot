@@ -8,6 +8,8 @@ import (
 
 	"discordbot/src/bot"
 	"discordbot/src/config"
+	"discordbot/src/database"
+	"discordbot/src/database/migrations"
 )
 
 func main() {
@@ -17,6 +19,9 @@ func main() {
 		fmt.Println("App environment is test, aborting startup")
 		return
 	}
+
+	database.Connect()
+	migrations.AutoMigrate()
 
 	bot.Start()
 

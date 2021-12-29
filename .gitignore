@@ -39,3 +39,4 @@ config.json
 
 # Docker
 tmp/
+.dbdata/

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"discordbot/src/commands"
+	"discordbot/src/commands/chess"
 	"discordbot/src/config"
 	"discordbot/src/context"
 	"discordbot/src/music"
@@ -16,7 +17,9 @@ import (
 const help string = "```Current commands are:\n\tping\n\tcard <card name>\n\tdice <die sides>\n\tinsult\n\tadvice\n\tkanye"
 
 // musicHelp is a constant for info provided about music functionality in help command
-const musicHelp string = "\n\nMusic commands:\n\tplay <youtube url/query>\n\tleave\n\tskip\n\tstop```"
+const musicHelp string = "\n\nMusic commands:\n\tplay <youtube url/query>\n\tleave\n\tskip\n\tstop"
+
+const chessHelp string = "\n\nChess commands (prefix chess command):\n\tchallenge @opponent\n\taccept\n\tdecline\n\tmove <algebraic notation>\n\tresign```"
 
 func AddHandlers() {
 	// Register handlers as callbacks for the events.
@@ -60,7 +63,7 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	switch cmd[0] {
 	case prefix + "help":
-		utils.SendChannelMessage(m.ChannelID, help+musicHelp)
+		utils.SendChannelMessage(m.ChannelID, help+musicHelp+chessHelp)
 	case prefix + "ping":
 		utils.SendChannelMessage(m.ChannelID, "Pong!")
 	case prefix + "card":
@@ -81,6 +84,8 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		music.SkipMusic(v, m)
 	case prefix + "stop":
 		music.StopMusic(v, m)
+	case prefix + "chess":
+		chess.Menu(cmd[1:], s, m)
 	default:
 		return
 	}
