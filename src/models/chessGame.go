@@ -1,8 +1,10 @@
 package models
 
 import (
-	"database/sql"
 	"database/sql/driver"
+	"time"
+
+	"gorm.io/gorm"
 
 	"discordbot/src/database"
 )
@@ -27,14 +29,14 @@ func (c GameState) Value() (driver.Value, error) {
 }
 
 type ChessGame struct {
-	ID          uint64    `json:"id"`
-	GuildID     string    `json:"guild-id" gorm:"not null; size:18"`
-	PlayerWhite string    `json:"player-white" gorm:"not null; size:18"`
-	PlayerBlack string    `json:"player-black" gorm:"not null; size:18"`
-	BoardState  string    `json:"board-state" gorm:"not null; type:TEXT"`
-	GameState   GameState `json:"game-state" gorm:"type:ENUM('WON_WHITE', 'WON_BLACK', 'TURN_WHITE', 'TURN_BLACK', 'DRAW');default:'TURN_WHITE';not null"`
-	CreatedAt   int64     `json:"created-at" gorm:"not null"`
-	DeletedAt   sql.NullInt64
+	ID          uint64    `gorm:"primaryKey"`
+	GuildID     string    `gorm:"not null; size:18"`
+	PlayerWhite string    `gorm:"not null; size:18"`
+	PlayerBlack string    `gorm:"not null; size:18"`
+	BoardState  string    `gorm:"not null; type:TEXT"`
+	GameState   GameState `gorm:"type:ENUM('WON_WHITE', 'WON_BLACK', 'TURN_WHITE', 'TURN_BLACK', 'DRAW');default:'TURN_WHITE';not null"`
+	CreatedAt   time.Time `gorm:"not null"`
+	DeletedAt   gorm.DeletedAt
 }
 
 func (c *ChessGame) Update() {

@@ -66,7 +66,7 @@ func createNewGame(index int, channelID string, botID string) {
 }
 
 func (s *chessSession) saveChessBoardToPng() string {
-	filepath := s.model.GuildID + "-" + strconv.FormatInt(s.model.CreatedAt, 10)
+	filepath := s.model.GuildID + "-" + strconv.FormatInt(s.model.CreatedAt.Unix(), 10)
 	f, err := os.Create(filepath)
 	if err != nil {
 		log.Fatal(err)
