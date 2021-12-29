@@ -175,4 +175,5 @@ func (s *chessSession) endGame(channelID string) {
 	s.model.Update()
 	database.DB.Delete(s.model)
 	utils.SendChannelMessage(channelID, message)
+	s.sendChannelChessBoard(channelID)
 }
