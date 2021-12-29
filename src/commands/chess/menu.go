@@ -28,7 +28,7 @@ func Menu(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 func challengePlayer(s *discordgo.Session, challenger *discordgo.MessageCreate, opponent string) {
 	var count int
 	database.DB.Raw(
-		"SELECT IFNULL((SELECT COUNT(id) FROM chess_games WHERE player_white = ? || player_black = ?), 0) "+
+		"SELECT IFNULL((SELECT COUNT(id) FROM chess_games WHERE player_white = ? OR player_black = ?), 0) "+
 			"FROM chess_games WHERE deleted_at IS NULL",
 		challenger.Author.ID, challenger.Author.ID).Scan(&count)
 
