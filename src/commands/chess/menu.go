@@ -70,7 +70,7 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 	database.DB.Raw(
 		"SELECT * "+
 			"FROM chess_games "+
-			"WHERE guild_id = ? && (player_white = ? || player_black = ?) && deleted_at IS NULL "+
+			"WHERE guild_id = ? AND (player_white = ? OR player_black = ?) AND deleted_at IS NULL "+
 			"LIMIT 1",
 		m.GuildID, m.Author.ID, m.Author.ID).Scan(&session.model)
 
@@ -103,7 +103,7 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 	}
 
 	session.updateTurnPlayer()
-	session.model.Update()
+	session.model.UpdateStates()
 	session.sendChannelChessBoard(m.ChannelID)
 
 	if session.isAiTurn(botID) {
@@ -117,7 +117,7 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 		}
 
 		session.updateTurnPlayer()
-		session.model.Update()
+		session.model.UpdateStates()
 		utils.SendChannelMessage(m.ChannelID, "**[Chess]** <@"+m.Author.ID+"> Your turn to move a piece!")
 		session.sendChannelChessBoard(m.ChannelID)
 	}

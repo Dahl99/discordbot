@@ -57,7 +57,7 @@ func createNewGame(index int, channelID string, botID string) {
 	if session.isAiPlayerWhite(botID) {
 		utils.SendChannelMessage(channelID, "**[Chess]** Game has started, <@"+botID+"> is moving the first piece!")
 		session.aiMovePiece()
-		session.model.Update()
+		session.model.UpdateStates()
 	} else {
 		utils.SendChannelMessage(channelID, "**[Chess]** Game has been started, <@"+playerWhite+"> move the first piece!")
 	}
@@ -172,7 +172,7 @@ func (s *chessSession) endGame(channelID string) {
 		message += "it ended as a draw."
 	}
 
-	s.model.Update()
+	s.model.UpdateStates()
 	database.DB.Delete(s.model)
 	utils.SendChannelMessage(channelID, message)
 	s.sendChannelChessBoard(channelID)
