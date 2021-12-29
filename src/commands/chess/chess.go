@@ -112,7 +112,7 @@ func (s *chessSession) updateBoardState() {
 func (s *chessSession) sendChannelChessBoard(channelID string) {
 	pngFilepath := s.saveChessBoardToPng()
 	if pngFilepath != "" {
-		utils.SendChannelFile(channelID, pngFilepath, "board.pngFilepath")
+		utils.SendChannelFile(channelID, pngFilepath, "board.png")
 	}
 	exec.Command("rm", pngFilepath).Run()
 }
