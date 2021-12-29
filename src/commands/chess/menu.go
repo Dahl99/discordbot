@@ -37,12 +37,24 @@ func challengePlayer(s *discordgo.Session, challenger *discordgo.MessageCreate, 
 		return
 	}
 
-	utils.SendChannelMessage(challenger.ChannelID, "**[Chess]** "+opponent+
-		" you have been challenged to a game by <@"+challenger.Author.ID+"> do you accept?")
-
 	opponentID := opponent
 	opponentID = strings.TrimLeft(opponentID, "<@!")
 	opponentID = strings.TrimRight(opponentID, ">")
+
+	for _, challenge := range challenges {
+		if challenger.GuildID == challenge.guildID && (challenger.Author.ID == challenge.challenger || challenger.Author.ID == challenge.opponent) {
+			utils.SendChannelMessage(challenger.ChannelID, "**[Chess]** <@"+challenger.Author.ID+"> There's already a challenge by/for you.")
+			return
+		}
+
+		if challenger.GuildID == challenge.guildID && opponentID == challenge.opponent {
+			utils.SendChannelMessage(challenger.ChannelID, "**[Chess]** <@"+challenger.Author.ID+"> That player has already been challenged by someone else.")
+			return
+		}
+	}
+
+	utils.SendChannelMessage(challenger.ChannelID, "**[Chess]** "+opponent+
+		" you have been challenged to a game by <@"+challenger.Author.ID+"> do you accept?")
 
 	challenge := &challenge{
 		guildID:    challenger.GuildID,
