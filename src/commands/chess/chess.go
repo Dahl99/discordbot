@@ -87,14 +87,14 @@ func (s *chessSession) saveChessBoardToPng() string {
 		return ""
 	}
 
-	pngName := strings.TrimRight(filepath, ".svg") + ".png"
+	pngFilepath := strings.TrimRight(filepath, ".svg") + ".png"
 
-	err = exec.Command("inkscape", "-w", "360", "-h", "360", filepath, "-o", pngName).Run()
+	err = exec.Command("inkscape", "-w", "360", "-h", "360", filepath, "-o", pngFilepath).Run()
 	if err != nil {
 		return ""
 	}
 
-	return pngName
+	return pngFilepath
 }
 
 func (s *chessSession) updateGameState() {
@@ -110,9 +110,9 @@ func (s *chessSession) updateBoardState() {
 }
 
 func (s *chessSession) sendChannelChessBoard(channelID string) {
-	png := s.saveChessBoardToPng()
-	if png != "" {
-		utils.SendChannelFile(channelID, png, "board.png")
+	pngFilepath := s.saveChessBoardToPng()
+	if pngFilepath != "" {
+		utils.SendChannelFile(channelID, pngFilepath, "board.pngFilepath")
 	}
-	exec.Command("rm", png).Run()
+	exec.Command("rm", pngFilepath).Run()
 }
