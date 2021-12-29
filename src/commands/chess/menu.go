@@ -28,7 +28,8 @@ func Menu(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 func challengePlayer(s *discordgo.Session, challenger *discordgo.MessageCreate, opponent string) {
 	var count int
 	database.DB.Raw(
-		"SELECT IFNULL((SELECT COUNT(id) FROM chess_games WHERE player_white = ? || player_black = ?), 0) FROM chess_games",
+		"SELECT IFNULL((SELECT COUNT(id) FROM chess_games WHERE player_white = ? || player_black = ?), 0) "+
+			"FROM chess_games WHERE deleted_at IS NULL",
 		challenger.Author.ID, challenger.Author.ID).Scan(&count)
 
 	if count > 0 {
@@ -69,7 +70,7 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 	database.DB.Raw(
 		"SELECT * "+
 			"FROM chess_games "+
-			"WHERE guild_id = ? && (player_white = ? || player_black = ?)"+
+			"WHERE guild_id = ? && (player_white = ? || player_black = ?) && deleted_at IS NULL"+
 			"LIMIT 1",
 		m.GuildID, m.Author.ID, m.Author.ID).Scan(&session.model)
 
@@ -95,13 +96,27 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 	}
 
 	session.updateBoardState()
-	session.updateGameState()
+
+	if session.isGameOver() {
+		session.endGame(m.ChannelID)
+		return
+	}
+
+	session.updateTurnPlayer()
 	session.model.Update()
 	session.sendChannelChessBoard(m.ChannelID)
 
 	if session.isAiTurn(botID) {
 		utils.SendChannelMessage(m.ChannelID, "**[Chess]** <@"+botID+"> is thinking about the next move!")
 		session.aiMovePiece()
+		session.updateBoardState()
+
+		if session.isGameOver() {
+			session.endGame(m.ChannelID)
+			return
+		}
+
+		session.updateTurnPlayer()
 		session.model.Update()
 		utils.SendChannelMessage(m.ChannelID, "**[Chess]** <@"+m.Author.ID+"> Your turn to move a piece!")
 		session.sendChannelChessBoard(m.ChannelID)

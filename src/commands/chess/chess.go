@@ -97,7 +97,7 @@ func (s *chessSession) saveChessBoardToPng() string {
 	return pngFilepath
 }
 
-func (s *chessSession) updateGameState() {
+func (s *chessSession) updateTurnPlayer() {
 	if s.model.GameState == models.TurnWhite {
 		s.model.GameState = models.TurnBlack
 	} else {
@@ -115,4 +115,64 @@ func (s *chessSession) sendChannelChessBoard(channelID string) {
 		utils.SendChannelFile(channelID, pngFilepath, "board.pngFilepath")
 	}
 	exec.Command("rm", pngFilepath).Run()
+}
+
+func (s *chessSession) hasWhiteWon() bool {
+	if s.game.Outcome() == chess.WhiteWon {
+		return true
+	}
+
+	return false
+}
+
+func (s *chessSession) hasBlackWon() bool {
+	if s.game.Outcome() == chess.BlackWon {
+		return true
+	}
+
+	return false
+}
+
+func (s *chessSession) isGameDraw() bool {
+	if s.game.Outcome() == chess.Draw {
+		return true
+	}
+
+	return false
+}
+
+func (s *chessSession) isGameOver() bool {
+	if s.hasWhiteWon() || s.hasBlackWon() || s.isGameDraw() {
+		return true
+	}
+
+	return false
+}
+
+func (s *chessSession) setWinnerOrDraw() {
+	if s.hasWhiteWon() {
+		s.model.GameState = models.WonWhite
+	} else if s.hasBlackWon() {
+		s.model.GameState = models.WonBlack
+	} else {
+		s.model.GameState = models.Draw
+	}
+}
+
+func (s *chessSession) endGame(channelID string) {
+	s.setWinnerOrDraw()
+
+	message := "**[Chess]** Game is over, "
+
+	if s.hasWhiteWon() {
+		message += "<@" + s.model.PlayerWhite + "> has won!"
+	} else if s.hasBlackWon() {
+		message += "<@" + s.model.PlayerBlack + "> has won!"
+	} else {
+		message += "it ended as a draw."
+	}
+
+	s.model.Update()
+	database.DB.Delete(s.model)
+	utils.SendChannelMessage(channelID, message)
 }

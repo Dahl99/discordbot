@@ -72,7 +72,4 @@ func (s *chessSession) aiMovePiece() {
 		log.Println("ERR: AI move failed: " + err.Error())
 		return
 	}
-
-	s.updateBoardState()
-	s.updateGameState()
 }

@@ -14,6 +14,7 @@ const (
 	WonBlack  GameState = "WON_BLACK"
 	TurnWhite GameState = "TURN_WHITE"
 	TurnBlack GameState = "TURN_BLACK"
+	Draw      GameState = "DRAW"
 )
 
 func (c *GameState) Scan(value interface{}) error {
@@ -31,7 +32,7 @@ type ChessGame struct {
 	PlayerWhite string    `json:"player-white" gorm:"not null; size:18"`
 	PlayerBlack string    `json:"player-black" gorm:"not null; size:18"`
 	BoardState  string    `json:"board-state" gorm:"not null; type:TEXT"`
-	GameState   GameState `json:"game-state" gorm:"type:ENUM('WON_WHITE', 'WON_BLACK', 'TURN_WHITE', 'TURN_BLACK');default:'TURN_WHITE';not null"`
+	GameState   GameState `json:"game-state" gorm:"type:ENUM('WON_WHITE', 'WON_BLACK', 'TURN_WHITE', 'TURN_BLACK', 'DRAW');default:'TURN_WHITE';not null"`
 	CreatedAt   int64     `json:"created-at" gorm:"not null"`
 	DeletedAt   sql.NullInt64
 }
