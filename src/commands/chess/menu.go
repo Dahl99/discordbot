@@ -17,7 +17,9 @@ func Menu(cmd []string, s *discordgo.Session, m *discordgo.MessageCreate) {
 	case "challenge":
 		challengePlayer(s, m, cmd[1])
 	case "accept":
-		accept(m.ID, m.GuildID, m.ChannelID, s.State.User.ID)
+		accept(m, s.State.User.ID)
+	case "decline":
+		decline(m)
 	case "move":
 		movePiece(m, cmd[1], s.State.User.ID)
 	default:
@@ -65,14 +67,26 @@ func challengePlayer(s *discordgo.Session, challenger *discordgo.MessageCreate, 
 	challenges = append(challenges, challenge)
 
 	if opponentID == s.State.User.ID {
-		accept(s.State.User.ID, challenger.GuildID, challenger.ChannelID, s.State.User.ID)
+		accept(challenger, s.State.User.ID)
 	}
 }
 
-func accept(userID string, guildID string, channelID string, botID string) {
+func accept(m *discordgo.MessageCreate, botID string) {
 	for index, challenge := range challenges {
-		if userID == challenge.opponent && guildID == challenge.guildID {
-			createNewGame(index, channelID, botID)
+		if m.Author.ID == challenge.opponent && m.GuildID == challenge.guildID {
+			createNewGame(index, m.ChannelID, botID)
+			challenges = append(challenges[:index], challenges[index+1:]...)
+			return
+		}
+	}
+}
+
+func decline(m *discordgo.MessageCreate) {
+	for index, challenge := range challenges {
+		if m.GuildID == challenge.guildID && (m.Author.ID == challenge.challenger || m.Author.ID == challenge.opponent) {
+			challenges = append(challenges[:index], challenges[index+1:]...)
+			utils.SendChannelMessage(m.ChannelID, "**[Chess]** <@"+m.Author.ID+"> declined the challenge.")
+			return
 		}
 	}
 }
