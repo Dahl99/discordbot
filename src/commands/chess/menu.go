@@ -70,7 +70,7 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 	database.DB.Raw(
 		"SELECT * "+
 			"FROM chess_games "+
-			"WHERE guild_id = ? && (player_white = ? || player_black = ?) && deleted_at IS NULL"+
+			"WHERE guild_id = ? && (player_white = ? || player_black = ?) && deleted_at IS NULL "+
 			"LIMIT 1",
 		m.GuildID, m.Author.ID, m.Author.ID).Scan(&session.model)
 
