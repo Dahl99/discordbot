@@ -172,7 +172,7 @@ func resign(m *discordgo.MessageCreate) {
 		return
 	}
 
-	var game models.ChessGame
+	var game *models.ChessGame
 	database.DB.Raw(
 		"SELECT * "+
 			"FROM chess_games "+
