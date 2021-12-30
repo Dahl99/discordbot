@@ -34,7 +34,7 @@ func createNewGame(index int, channelID string, botID string) {
 
 	var playerWhite string
 	var playerBlack string
-	if rand.Intn(1) == 0 {
+	if rand.Intn(2) == 0 {
 		playerWhite = challenge.challenger
 		playerBlack = challenge.opponent
 	} else {
