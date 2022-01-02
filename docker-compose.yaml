@@ -4,6 +4,7 @@ services:
     build: .
     depends_on:
       - db
+    restart: unless-stopped
   db:
     image: mysql/mysql-server:8.0.27
     restart: unless-stopped
