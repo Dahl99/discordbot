@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Compose CI
 'on':
   push:
     branches:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build the Docker image
+      - name: Build the Docker images
         run: |
           sudo touch .env
-          docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+          docker compose build
