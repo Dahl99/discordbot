@@ -1,19 +1,36 @@
 version: '3.9'
+
+networks:
+  discordbot:
+    driver: bridge
+
+volumes:
+  dbdata:
+
 services:
-  backend:
-    build: .
+  go:
+    container_name: go
+    build:
+      context: .
+      dockerfile: docker/go/Dockerfile
     depends_on:
-      - db
+      - mysql
     restart: unless-stopped
-  db:
+    networks:
+      - discordbot
+  mysql:
     image: mysql/mysql-server:8.0.27
+    container_name: mysql
     restart: unless-stopped
+    tty: true
     environment:
       MYSQL_DATABASE: discordbot
       MYSQL_USER: root
       MYSQL_PASSWORD: root
       MYSQL_ROOT_PASSWORD: root
     volumes:
-      - .dbdata:/var/lib/mysql
+      - dbdata:/var/lib/mysql/
     ports:
-      - "33066:3306"
+      - "3306:3306"
+    networks:
+      - discordbot
