@@ -1,1 +1,4 @@
-.dbdata/
+.github/
+.idea/
+.gitignore
+README.md
