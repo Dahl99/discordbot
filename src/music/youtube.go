@@ -110,7 +110,7 @@ func ytFind(videoId string) (string, error) {
 	return videoTitle, nil
 }
 
-func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.MessageCreate) (song_struct PkgSong, err error) {
+func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.MessageCreate) (songStruct PkgSong, err error) {
 
 	cmd := exec.Command("youtube-dl", "--skip-download", "--print-json", "--flat-playlist", videoId)
 	var out bytes.Buffer
@@ -149,8 +149,8 @@ func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.
 	}
 
 	// var song_struct PkgSong
-	song_struct.data = song
-	song_struct.v = v
+	songStruct.data = song
+	songStruct.v = v
 
-	return song_struct, nil
+	return songStruct, nil
 }

@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/notnil/chess"
 	"github.com/notnil/chess/image"
 
@@ -69,21 +70,23 @@ func (s *chessSession) saveChessBoardToPng() string {
 	filepath := s.model.GuildID + "-" + strconv.FormatInt(s.model.CreatedAt.Unix(), 10)
 	f, err := os.Create(filepath)
 	if err != nil {
+		sentry.CaptureException(err)
 		log.Fatal(err)
 		return ""
 	}
+
 	defer f.Close()
 
 	// create board position
 	fenStr := s.game.FEN()
 	pos := &chess.Position{}
 	if err := pos.UnmarshalText([]byte(fenStr)); err != nil {
-		log.Fatal(err)
+		sentry.CaptureException(err)
 		return ""
 	}
 
 	if err := image.SVG(f, pos.Board()); err != nil {
-		log.Fatal(err)
+		sentry.CaptureException(err)
 		return ""
 	}
 
@@ -91,6 +94,7 @@ func (s *chessSession) saveChessBoardToPng() string {
 
 	err = exec.Command("inkscape", "-w", "360", "-h", "360", filepath, "-o", pngFilepath).Run()
 	if err != nil {
+		sentry.CaptureException(err)
 		return ""
 	}
 

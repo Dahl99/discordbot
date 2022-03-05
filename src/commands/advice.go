@@ -7,6 +7,8 @@ import (
 
 	"discordbot/src/utils"
 
+	"github.com/getsentry/sentry-go"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -32,7 +34,8 @@ func PostAdvice(m *discordgo.MessageCreate) {
 
 func getAdvice() string {
 	res, err := http.Get(adviceSlipURL) // Fetching an advice
-	if err != nil {                     // Checking for errors
+	if err != nil {
+		sentry.CaptureException(err)
 		log.Println(http.StatusServiceUnavailable)
 		return adviceSlipNotAvailable
 	}
@@ -41,6 +44,7 @@ func getAdvice() string {
 	var slips allSlips
 	err = json.NewDecoder(res.Body).Decode(&slips)
 	if err != nil {
+		sentry.CaptureException(err)
 		log.Println(err)
 		return "ERR: decoding data failed"
 	}

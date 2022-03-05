@@ -7,6 +7,8 @@ import (
 
 	"discordbot/src/utils"
 
+	"github.com/getsentry/sentry-go"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -27,6 +29,7 @@ func PostKanyeQuote(m *discordgo.MessageCreate) {
 func getKanyeQuote() string {
 	res, err := http.Get(kanyeRestEndpoint)
 	if err != nil {
+		sentry.CaptureException(err)
 		log.Println(err)
 		return kanyeRestUnavailable
 	}
@@ -35,6 +38,7 @@ func getKanyeQuote() string {
 
 	err = json.NewDecoder(res.Body).Decode(&kanyeQuoteObj)
 	if err != nil {
+		sentry.CaptureException(err)
 		log.Println(err)
 		return "ERR: decoding data failed"
 	}

@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/notnil/chess"
 	"github.com/notnil/chess/uci"
 
@@ -27,6 +28,7 @@ func StopChessAi() {
 
 func (s *chessSession) getAiMove() *chess.Move {
 	if err := eng.Run(uci.CmdUCI, uci.CmdIsReady, uci.CmdUCINewGame); err != nil {
+		sentry.CaptureException(err)
 		log.Println(err)
 	}
 
@@ -34,6 +36,7 @@ func (s *chessSession) getAiMove() *chess.Move {
 	cmdGo := uci.CmdGo{MoveTime: time.Second * 10}
 
 	if err := eng.Run(cmdPos, cmdGo); err != nil {
+		sentry.CaptureException(err)
 		log.Println(err)
 	}
 

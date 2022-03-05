@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/getsentry/sentry-go"
 	"github.com/notnil/chess"
 
 	"discordbot/src/database"
@@ -121,6 +122,7 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 	pgnReader := strings.NewReader(session.model.BoardState)
 	pgn, err := chess.PGN(pgnReader)
 	if err != nil {
+		sentry.CaptureException(err)
 		log.Println("ERR: PGN creation failed")
 		utils.SendChannelMessage(m.ChannelID, "**[Chess]** Oops, something went wrong. Please try again.")
 		return
@@ -129,6 +131,7 @@ func movePiece(m *discordgo.MessageCreate, move string, botID string) {
 	session.game = chess.NewGame(pgn)
 	err = session.game.MoveStr(move)
 	if err != nil {
+		sentry.CaptureException(err)
 		log.Println(err)
 		utils.SendChannelMessage(m.ChannelID, "**[Chess]** <@"+m.Author.ID+">Invalid move! Remember to use algebraic notation!")
 		return

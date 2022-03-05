@@ -7,6 +7,8 @@ import (
 
 	"discordbot/src/utils"
 
+	"github.com/getsentry/sentry-go"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -27,7 +29,8 @@ func PostInsult(m *discordgo.MessageCreate) {
 
 func getInsult() string {
 	res, err := http.Get(insultUrl) // Fetching an insult
-	if err != nil {                 // Checking for errors
+	if err != nil {
+		sentry.CaptureException(err) // Checking for errors
 		log.Println(http.StatusServiceUnavailable)
 		return evilInsultNotAvailable
 	}
@@ -36,6 +39,7 @@ func getInsult() string {
 
 	err = json.NewDecoder(res.Body).Decode(&insultObj) // Decoding data into struct object
 	if err != nil {
+		sentry.CaptureException(err)
 		log.Println(err)
 		return "ERR: decoding data failed"
 	}

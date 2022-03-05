@@ -8,6 +8,8 @@ import (
 	"discordbot/src/music"
 	"discordbot/src/utils"
 
+	"github.com/getsentry/sentry-go"
+
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -30,9 +32,11 @@ func AddHandlers() {
 
 // ReadyHandler will be called when the bot receives the "ready" event from Discord.
 func ReadyHandler(s *discordgo.Session, event *discordgo.Ready) {
-
 	// Set the playing status.
-	s.UpdateGameStatus(0, config.GetBotStatus())
+	err := s.UpdateGameStatus(0, config.GetBotStatus())
+	if err != nil {
+		sentry.CaptureException(err)
+	}
 }
 
 // GuildCreateHandler will be called every time a new guild is joined.
@@ -44,7 +48,11 @@ func GuildCreateHandler(s *discordgo.Session, event *discordgo.GuildCreate) {
 
 	for _, channel := range event.Guild.Channels {
 		if channel.ID == event.Guild.ID {
-			s.ChannelMessageSend(channel.ID, config.GetBotGuildJoinMessage())
+			_, err := s.ChannelMessageSend(channel.ID, config.GetBotGuildJoinMessage())
+			if err != nil {
+				sentry.CaptureException(err)
+			}
+
 			return
 		}
 	}

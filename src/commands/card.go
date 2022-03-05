@@ -8,16 +8,18 @@ import (
 
 	"discordbot/src/utils"
 
+	"github.com/getsentry/sentry-go"
+
 	"github.com/bwmarrin/discordgo"
 )
 
-// scryfallBaseeUrl contains the root of the url
-const scryfallBaseeUrl string = "https://api.scryfall.com/cards/named?fuzzy="
+// scryfallBaseUrl contains the root of the url
+const scryfallBaseUrl string = "https://api.scryfall.com/cards/named?fuzzy="
 
 // ScryfallNotAvailable contains string to be sent if scryfall API is unavailable
 const ScryfallNotAvailable string = "Scryfall API not available at the moment."
 
-//Sub struct in exactResult struct. It's used to store the imageURIs from scryfall api
+// Sub struct in exactResult struct. It's used to store the imageURIs from scryfall api
 type imageURI struct {
 	Png string `json:"png"`
 }
@@ -31,7 +33,7 @@ type prices struct {
 	UsdFoil string `json:"usd_foil"`
 }
 
-//Struct used to store data from second http.Get()
+// Struct used to store data from second http.Get()
 type fuzzyResult struct {
 	Name   string       `json:"name"`
 	Image  imageURI     `json:"image_uris"`
@@ -46,7 +48,7 @@ func PostCard(cmd []string, m *discordgo.MessageCreate) {
 	}
 }
 
-//getCard() fetches a card based on which card name used in command
+// getCard() fetches a card based on which card name used in command
 func getCard(n []string) string {
 
 	name := strings.Join(n[1:], "_")
@@ -55,10 +57,11 @@ func getCard(n []string) string {
 		return "Name needs to have 3 or more letters to search"
 	}
 
-	URL := scryfallBaseeUrl + name // Sets url for exact card get request
+	URL := scryfallBaseUrl + name // Sets url for exact card get request
 
 	res, err := http.Get(URL) // Fetching exact card
-	if err != nil {           // Checking for errors
+	if err != nil {
+		sentry.CaptureException(err)
 		log.Println(http.StatusServiceUnavailable)
 		return ScryfallNotAvailable
 	}
@@ -67,6 +70,7 @@ func getCard(n []string) string {
 	var card fuzzyResult
 	err = json.NewDecoder(res.Body).Decode(&card)
 	if err != nil {
+		sentry.CaptureException(err)
 		log.Println(err)
 		return "ERR: decoding data failed"
 	}
@@ -74,7 +78,7 @@ func getCard(n []string) string {
 	res.Body.Close() // Closing body to prevent resource leak
 
 	if card.Image.Png == "" && card.Faces[0].Image.Png == "" && card.Faces[1].Image.Png == "" {
-		return "Unable to find requested card, avoid ambigous searches!"
+		return "Unable to find requested card, avoid ambiguous searches!"
 	}
 
 	//	Making the returned string
