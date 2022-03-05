@@ -96,7 +96,7 @@ func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 
 	voiceChannelID := utils.SearchVoiceChannel(m.Author.ID)
 	if v.voice.ChannelID != voiceChannelID {
-		utils.SendChannelMessage(m.ChannelID, "[Music] <@"+m.Author.ID+"> you need to join my voice channel first!")
+		utils.SendChannelMessage(m.ChannelID, "**[Music]** <@"+m.Author.ID+"> you need to join my voice channel first!")
 		return
 	}
 
@@ -144,7 +144,7 @@ func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		}
 
 		log.Println("INFO: Youtube search: ", err)
-		utils.SendChannelMessage(m.ChannelID, "[Music] Unable to find song")
+		utils.SendChannelMessage(m.ChannelID, "**[Music]** Unable to find song")
 		return
 	}
 
