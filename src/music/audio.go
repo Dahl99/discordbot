@@ -7,6 +7,8 @@ import (
 
 	"discordbot/src/utils"
 
+	"github.com/getsentry/sentry-go"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/jung-m/dca"
 )
@@ -118,8 +120,10 @@ func (v *VoiceInstance) DCA(url string) {
 
 	encodeSession, err := dca.EncodeFile(url, opts)
 	if err != nil {
-		log.Println("FATA: Failed creating an encoding session: ", err)
+		sentry.CaptureException(err)
+		log.Println("ERR: Failed creating an encoding session: ", err)
 	}
+
 	v.encoder = encodeSession
 	done := make(chan error)
 	v.stream = dca.NewStream(encodeSession, v.voice, done)
@@ -127,9 +131,11 @@ func (v *VoiceInstance) DCA(url string) {
 		select {
 		case err := <-done:
 			if err != nil && err != io.EOF {
-				log.Println("FATA: An error occured", err)
+				sentry.CaptureException(err)
+				log.Println("ERR: An error occurred", err)
 			}
-			// Clean up incase something happened and ffmpeg is still running
+
+			// Clean up in case something happened and ffmpeg is still running
 			encodeSession.Cleanup()
 			return
 		}
@@ -152,6 +158,7 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 				utils.SendChannelMessage(v.nowPlaying.ChannelID, "[Music] End of queue")
 				return
 			}
+
 			v.nowPlaying = v.QueueGetSong()
 			go utils.SendChannelMessage(v.nowPlaying.ChannelID, "[Music] Now playing: **"+v.nowPlaying.Title+"**")
 
@@ -159,7 +166,11 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 			v.skip = false
 			v.speaking = true
 			v.pause = false
-			v.voice.Speaking(true)
+			err := v.voice.Speaking(true)
+			if err != nil {
+				sentry.CaptureException(err)
+				return
+			}
 
 			v.DCA(v.nowPlaying.VideoURL)
 
@@ -171,7 +182,11 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 			v.stop = false
 			v.skip = false
 			v.speaking = false
-			v.voice.Speaking(false)
+
+			err = v.voice.Speaking(false)
+			if err != nil {
+				sentry.CaptureException(err)
+			}
 		}
 	}()
 }

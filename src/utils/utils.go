@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"discordbot/src/context"
+
+	"github.com/getsentry/sentry-go"
 )
 
 // SearchGuild search the guild ID
@@ -28,15 +30,22 @@ func SearchVoiceChannel(user string) (voiceChannelID string) {
 
 // SendChannelMessage sends a channel message to channel with channel id equal to m.ChannelID
 func SendChannelMessage(channelID string, message string) {
-	context.Dg.ChannelMessageSend(channelID, message)
+	_, err := context.Dg.ChannelMessageSend(channelID, message)
+	if err != nil {
+		sentry.CaptureException(err)
+	}
 }
 
 func SendChannelFile(channelID string, filepath string, name string) {
 	reader, err := os.Open(filepath)
 	if err != nil {
+		sentry.CaptureException(err)
 		log.Println(err)
 		return
 	}
 
-	context.Dg.ChannelFileSend(channelID, name, reader)
+	_, err = context.Dg.ChannelFileSend(channelID, name, reader)
+	if err != nil {
+		sentry.CaptureException(err)
+	}
 }

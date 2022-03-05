@@ -3,17 +3,21 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
 
 type configuration struct {
-	AppEnvironment      string
-	BotPrefix           string
-	BotStatus           string
-	BotGuildJoinMessage string
-	DiscordToken        string
-	YoutubeKey          string
+	AppEnvironment         string
+	BotPrefix              string
+	BotStatus              string
+	BotGuildJoinMessage    string
+	DiscordToken           string
+	YoutubeKey             string
+	SentryDsn              string
+	SentryEnvironment      string
+	SentryTracesSampleRate float64
 }
 
 const APP_ENVIRONMENT_LOCAL string = "LOCAL"
@@ -30,13 +34,18 @@ func Load() {
 		log.Fatalln("Error loading .env file")
 	}
 
+	tracesSampleRate, _ := strconv.ParseFloat(os.Getenv("SENTRY_TRACES_SAMPLE_RATE"), 64)
+
 	config = &configuration{
-		AppEnvironment:      os.Getenv("APP_ENVIRONMENT"),
-		BotPrefix:           os.Getenv("BOT_PREFIX"),
-		BotStatus:           os.Getenv("BOT_STATUS"),
-		BotGuildJoinMessage: os.Getenv("BOT_GUILD_JOIN_MESSAGE"),
-		DiscordToken:        os.Getenv("DISCORD_TOKEN"),
-		YoutubeKey:          os.Getenv("YOUTUBE_KEY"),
+		AppEnvironment:         os.Getenv("APP_ENVIRONMENT"),
+		BotPrefix:              os.Getenv("BOT_PREFIX"),
+		BotStatus:              os.Getenv("BOT_STATUS"),
+		BotGuildJoinMessage:    os.Getenv("BOT_GUILD_JOIN_MESSAGE"),
+		DiscordToken:           os.Getenv("DISCORD_TOKEN"),
+		YoutubeKey:             os.Getenv("YOUTUBE_KEY"),
+		SentryDsn:              os.Getenv("SENTRY_DSN"),
+		SentryEnvironment:      os.Getenv("SENTRY_ENVIRONMENT"),
+		SentryTracesSampleRate: tracesSampleRate,
 	}
 }
 
@@ -76,4 +85,16 @@ func GetDiscordToken() string {
 
 func GetYoutubeKey() string {
 	return config.YoutubeKey
+}
+
+func GetSentryDsn() string {
+	return config.SentryDsn
+}
+
+func GetSentryEnvironment() string {
+	return config.SentryEnvironment
+}
+
+func GetSentryTracesSampleRate() float64 {
+	return config.SentryTracesSampleRate
 }

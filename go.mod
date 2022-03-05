@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/bwmarrin/discordgo v0.23.2
+	github.com/getsentry/sentry-go v0.12.0
 	github.com/joho/godotenv v1.4.0
 	github.com/jung-m/dca v0.0.0-20210605195325-e8853e6e48db
 	github.com/notnil/chess v1.7.2
