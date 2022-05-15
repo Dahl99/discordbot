@@ -3,13 +3,13 @@ module discordbot
 go 1.17
 
 require (
-	github.com/bwmarrin/discordgo v0.24.0
+	github.com/bwmarrin/discordgo v0.25.0
 	github.com/getsentry/sentry-go v0.13.0
 	github.com/joho/godotenv v1.4.0
 	github.com/jung-m/dca v0.0.0-20210605195325-e8853e6e48db
 	github.com/notnil/chess v1.8.0
 	gorm.io/driver/mysql v1.3.3
-	gorm.io/gorm v1.23.4
+	gorm.io/gorm v1.23.5
 )
 
 require (
@@ -19,6 +19,6 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jonas747/ogg v0.0.0-20161220051205-b4f6f4cf3757 // indirect
-	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
-	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
+	golang.org/x/crypto v0.0.0-20220513210258-46612604a0f9 // indirect
+	golang.org/x/sys v0.0.0-20220513210249-45d2b4557a2a // indirect
 )
