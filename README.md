@@ -30,10 +30,10 @@ There are many great Discord bots out there, but I wanted to develop my own. I w
 
 This discord bot is built with:
 
-* [Go version 1.17.5](https://golang.org/)
+* [Go version 1.20](https://golang.org/)
 * [DiscordGo](https://github.com/bwmarrin/discordgo)
 * [dca](https://github.com/jonas747/dca)
-* [nodemon](https://nodemon.io/)
+* [Docker and docker compose v2](https://www.docker.com)
 
 ## Getting Started
 
@@ -43,8 +43,8 @@ To get a local copy up and running follow these simple example steps.
 
 In order to run this project you will need the following:
 
-* Go 1.17.1 installed
-* Docker and Docker Compose installed
+* Go 1.20 installed
+* Docker and Docker Compose v2 installed
 * Discord account
 * Google developer account
 
@@ -66,7 +66,7 @@ In order to run this project you will need the following:
    go mod download all
    ```
 
-7. Create the environment variables file `.env` in the root folder and add the following:
+7. Create the environment variables file `.env` from the `.env.example` file in the root folder and add the following:
 
     ```dotenv
     APP_ENVIRONMENT=LOCAL or TEST or PRODUCTION
@@ -74,7 +74,7 @@ In order to run this project you will need the following:
     BOT_STATUS="Your bot status message"
     BOT_GUILD_JOIN_MESSAGE="Your bot guild join message"
     DISCORD_TOKEN=Your discord token
-    YOUTUBE_KEY=Your youtube key
+    YOUTUBE_API_KEY=Your youtube api key
     ```
 
 ## Usage
