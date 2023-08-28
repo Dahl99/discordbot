@@ -6,18 +6,18 @@ import (
 	"os"
 )
 
-// SearchGuild search the guild ID
-func SearchGuild(textChannelID string) (guildID string) {
+// SearchGuildByChannelID search the guild ID
+func SearchGuildByChannelID(textChannelID string) (guildID string) {
 	channel, _ := Session.Channel(textChannelID)
 	guildID = channel.GuildID
 	return guildID
 }
 
-// SearchVoiceChannel search the voice channel id into from guild.
-func SearchVoiceChannel(user string) (voiceChannelID string) {
+// SearchVoiceChannelByUserID search the voice channel id into from guild.
+func SearchVoiceChannelByUserID(userID string) (voiceChannelID string) {
 	for _, g := range Session.State.Guilds {
 		for _, v := range g.VoiceStates {
-			if v.UserID == user {
+			if v.UserID == userID {
 				return v.ChannelID
 			}
 		}
@@ -33,14 +33,14 @@ func SendChannelMessage(channelID string, message string) {
 	}
 }
 
-func SendChannelFile(channelID string, filepath string, name string) {
+func SendChannelFile(channelID string, filepath string, filename string) {
 	reader, err := os.Open(filepath)
 	if err != nil {
 		slog.Warn("failed to open file", "filepath", filepath, "error", err)
 		return
 	}
 
-	_, err = Session.ChannelFileSend(channelID, name, reader)
+	_, err = Session.ChannelFileSend(channelID, filename, reader)
 	if err != nil {
 		slog.Warn("failed to send file to channel", "channelId", channelID, "filepath", filepath, "error", err)
 	}

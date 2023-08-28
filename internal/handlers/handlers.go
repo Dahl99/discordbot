@@ -58,7 +58,7 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	log.Println("Message: " + m.Content)
 
 	prefix := config.GetBotPrefix()
-	guildID := discord.SearchGuild(m.ChannelID)
+	guildID := discord.SearchGuildByChannelID(m.ChannelID)
 	v := music2.VoiceInstances[guildID]
 	cmd := strings.Split(m.Content, " ") //	Splitting command into string slice
 

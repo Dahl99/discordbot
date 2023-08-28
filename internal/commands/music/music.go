@@ -20,7 +20,7 @@ func StartRoutine() {
 }
 
 func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) *VoiceInstance {
-	voiceChannelID := discord.SearchVoiceChannel(m.Author.ID)
+	voiceChannelID := discord.SearchVoiceChannelByUserID(m.Author.ID)
 	if voiceChannelID == "" {
 		slog.Warn("Voice channel id not found when trying to join voice channel")
 		discord.SendChannelMessage(m.ChannelID, "**[Music]** You need to join a voice channel first!")
@@ -30,7 +30,7 @@ func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreat
 	if v != nil {
 		log.Println("INFO: Voice instance already created")
 	} else {
-		guildID := discord.SearchGuild(m.ChannelID)
+		guildID := discord.SearchGuildByChannelID(m.ChannelID)
 		mutex.Lock()
 		v = new(VoiceInstance)
 		VoiceInstances[guildID] = v
@@ -89,7 +89,7 @@ func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		}
 	}
 
-	voiceChannelID := discord.SearchVoiceChannel(m.Author.ID)
+	voiceChannelID := discord.SearchVoiceChannelByUserID(m.Author.ID)
 	if v.voice.ChannelID != voiceChannelID {
 		discord.SendChannelMessage(m.ChannelID, "**[Music]** <@"+m.Author.ID+"> you need to join my voice channel first!")
 		return
@@ -177,7 +177,7 @@ func StopMusic(v *VoiceInstance, m *discordgo.MessageCreate) {
 		discord.SendChannelMessage(m.ChannelID, "**[Music]** Can't stop playing music when not in a voice channel!")
 		return
 	}
-	voiceChannelID := discord.SearchVoiceChannel(m.Author.ID)
+	voiceChannelID := discord.SearchVoiceChannelByUserID(m.Author.ID)
 	if v.voice.ChannelID != voiceChannelID {
 		slog.Info("failed to stop music, user is not in same voice channel as bot", "userId", m.Author.ID, "username", m.Author.Username)
 		discord.SendChannelMessage(m.ChannelID, "**[Music]** <@"+m.Author.ID+"> You need to join my voice channel to stop music!")

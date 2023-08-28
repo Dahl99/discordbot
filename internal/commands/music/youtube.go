@@ -128,7 +128,7 @@ func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.
 		return
 	}
 
-	guildID := discord.SearchGuild(m.ChannelID)
+	guildID := discord.SearchGuildByChannelID(m.ChannelID)
 	member, _ := v.session.GuildMember(guildID, m.Author.ID)
 	userName := ""
 
