@@ -1,27 +1,49 @@
 package bot
 
 import (
-	"github.com/Dahl99/DiscordBot/internal/commands/chess"
-	"github.com/Dahl99/DiscordBot/internal/context"
-	"github.com/Dahl99/DiscordBot/internal/handlers"
-	"github.com/Dahl99/DiscordBot/internal/music"
-	"math/rand"
-	"time"
-
-	"github.com/bwmarrin/discordgo"
+	"fmt"
+	"github.com/Dahl99/discord-bot/internal/commands/chess"
+	"github.com/Dahl99/discord-bot/internal/commands/music"
+	"github.com/Dahl99/discord-bot/internal/config"
+	"github.com/Dahl99/discord-bot/internal/database"
+	"github.com/Dahl99/discord-bot/internal/database/migrations"
+	"github.com/Dahl99/discord-bot/internal/discord"
+	"github.com/Dahl99/discord-bot/internal/handlers"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func Start() {
-	rand.Seed(time.Now().UnixNano())
-	context.Initialize()
-	handlers.AddHandlers()
-	context.Dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentGuildMessageTyping
-	context.OpenConnection()
-	music.InitializeRoutine()
-	chess.InitChessAi()
+	config.Load()
+	if config.IsAppEnvironment(config.APP_ENVIRONMENT_TEST) {
+		fmt.Println("App environment is test, aborting startup")
+		return
+	}
+
+	discord.InitSession()
+	addHandlers()
+	discord.InitConnection()
+
+	music.StartRoutine()
+	chess.InitAi()
+
+	// Connect to database and run migrations
+	database.Connect()
+	migrations.AutoMigrate()
+
+	fmt.Println("Bot is running. Press Ctrl + C to exit.")
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	<-sc
+
+	chess.StopChessAi()
+	discord.Session.Close()
 }
 
-func Stop() {
-	chess.StopChessAi()
-	context.Dg.Close()
+func addHandlers() {
+	// Register handlers as callbacks for the events.
+	discord.Session.AddHandler(handlers.ReadyHandler)
+	// Session.AddHandler(handlers.GuildCreateHandler)
+	discord.Session.AddHandler(handlers.MessageCreateHandler)
 }

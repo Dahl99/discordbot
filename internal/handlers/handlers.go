@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"github.com/Dahl99/DiscordBot/internal/commands"
-	"github.com/Dahl99/DiscordBot/internal/commands/chess"
-	"github.com/Dahl99/DiscordBot/internal/config"
-	"github.com/Dahl99/DiscordBot/internal/context"
-	"github.com/Dahl99/DiscordBot/internal/discord"
-	"github.com/Dahl99/DiscordBot/internal/music"
+	"github.com/Dahl99/discord-bot/internal/commands"
+	"github.com/Dahl99/discord-bot/internal/commands/chess"
+	music2 "github.com/Dahl99/discord-bot/internal/commands/music"
+	"github.com/Dahl99/discord-bot/internal/config"
+	"github.com/Dahl99/discord-bot/internal/discord"
 	"log"
 	"log/slog"
 	"strings"
@@ -21,13 +20,6 @@ const help string = "```Current commands are:\n\tping\n\tcard <card name>\n\tdic
 const musicHelp string = "\n\nMusic commands:\n\tplay <youtube url/query>\n\tleave\n\tskip\n\tstop"
 
 const chessHelp string = "\n\nChess commands (prefix chess command):\n\tchallenge @opponent\n\taccept\n\tdecline\n\tmove <algebraic notation>\n\tresign```"
-
-func AddHandlers() {
-	// Register handlers as callbacks for the events.
-	context.Dg.AddHandler(ReadyHandler)
-	// context.Dg.AddHandler(GuildCreateHandler)
-	context.Dg.AddHandler(MessageCreateHandler)
-}
 
 // ReadyHandler will be called when the bot receives the "ready" event from Discord.
 func ReadyHandler(s *discordgo.Session, event *discordgo.Ready) {
@@ -67,7 +59,7 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	prefix := config.GetBotPrefix()
 	guildID := discord.SearchGuild(m.ChannelID)
-	v := music.VoiceInstances[guildID]
+	v := music2.VoiceInstances[guildID]
 	cmd := strings.Split(m.Content, " ") //	Splitting command into string slice
 
 	switch cmd[0] {
@@ -86,13 +78,13 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case prefix + "kanye":
 		commands.PostKanyeQuote(m)
 	case prefix + "play":
-		music.PlayMusic(cmd[1:], v, s, m)
+		music2.PlayMusic(cmd[1:], v, s, m)
 	case prefix + "leave":
-		music.LeaveVoice(v, m)
+		music2.LeaveVoice(v, m)
 	case prefix + "skip":
-		music.SkipMusic(v, m)
+		music2.SkipMusic(v, m)
 	case prefix + "stop":
-		music.StopMusic(v, m)
+		music2.StopMusic(v, m)
 	case prefix + "chess":
 		chess.Menu(cmd[1:], s, m)
 	default:

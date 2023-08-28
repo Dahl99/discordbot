@@ -2,7 +2,7 @@ package commands
 
 import (
 	"encoding/json"
-	"github.com/Dahl99/DiscordBot/internal/discord"
+	"github.com/Dahl99/discord-bot/internal/discord"
 	"log/slog"
 	"net/http"
 	"strings"

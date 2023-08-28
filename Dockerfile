@@ -1,5 +1,5 @@
 # Builder container
-FROM golang:1.17.8 AS builder
+FROM golang:1.21 AS builder
 
 # Set working directory
 WORKDIR /src
@@ -15,7 +15,7 @@ RUN go mod download all
 
 # Copy source files and build executable
 COPY . ./
-RUN go build -v -o /bin/app ./cmd/discordbot/discordbot.go
+RUN go build -v -o /bin/app ./cmd/discordbot/main.go
 
 # Production container
 FROM debian:bullseye-slim AS final

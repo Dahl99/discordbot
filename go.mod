@@ -1,4 +1,4 @@
-module github.com/Dahl99/DiscordBot
+module github.com/Dahl99/discord-bot
 
 go 1.21
 
@@ -20,5 +20,4 @@ require (
 	github.com/jonas747/ogg v0.0.0-20161220051205-b4f6f4cf3757 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
-	golang.org/x/text v0.12.0 // indirect
 )

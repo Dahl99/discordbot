@@ -1,7 +1,7 @@
 package chess
 
 import (
-	"github.com/Dahl99/DiscordBot/internal/models"
+	"github.com/Dahl99/discord-bot/internal/models"
 	"log/slog"
 	"time"
 
@@ -11,7 +11,7 @@ import (
 
 var eng *uci.Engine
 
-func InitChessAi() {
+func InitAi() {
 	// set up engine to use stockfish exe
 	var err error
 	eng, err = uci.New("stockfish")

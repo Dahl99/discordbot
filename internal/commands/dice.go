@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/Dahl99/DiscordBot/internal/discord"
+	"github.com/Dahl99/discord-bot/internal/discord"
 	"math/rand"
 	"strconv"
 

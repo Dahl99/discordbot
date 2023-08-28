@@ -1,4 +1,4 @@
-# DiscordBot
+# discord-bot
 
 <!-- TABLE OF CONTENTS -->
 <details open="open">
@@ -57,7 +57,7 @@ In order to run this project you will need the following:
 5. Clone the repository
 
    ```sh
-   git clone https://github.com/Dahl99/DiscordBot.git
+   git clone https://github.com/Dahl99/discord-bot.git
    ```
 
 6. Install dependencies
@@ -92,4 +92,4 @@ docker compose up
 
 ## Contact
 
-Project Link: [https://github.com/Dahl99/DiscordBot](https://github.com/Dahl99/DiscordBot)
+Project Link: [https://github.com/Dahl99/discord-bot](https://github.com/Dahl99/discord-bot)

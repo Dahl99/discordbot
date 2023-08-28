@@ -1,8 +1,7 @@
 package music
 
 import (
-	"github.com/Dahl99/DiscordBot/internal/context"
-	"github.com/Dahl99/DiscordBot/internal/discord"
+	"github.com/Dahl99/discord-bot/internal/discord"
 	"log"
 	"log/slog"
 	"net/url"
@@ -15,7 +14,7 @@ import (
 // youtubeVideoUrl is a constant containing endpoint for a youtube video
 const youtubeVideoUrl string = "https://www.youtube.com/watch?v="
 
-func InitializeRoutine() {
+func StartRoutine() {
 	SongSignal = make(chan PkgSong)
 	go globalPlay(SongSignal)
 }
@@ -41,9 +40,8 @@ func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreat
 	}
 
 	var err error
-	v.voice, err = context.Dg.ChannelVoiceJoin(v.GuildID, voiceChannelID, false, true)
+	v.voice, err = discord.JoinVoiceChannel(v.GuildID, voiceChannelID, false, true)
 	if err != nil {
-		slog.Warn("failed to join voice channel", "error", err)
 		v.Stop()
 		return nil
 	}

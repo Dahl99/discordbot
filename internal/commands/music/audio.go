@@ -1,7 +1,7 @@
 package music
 
 import (
-	"github.com/Dahl99/DiscordBot/internal/discord"
+	"github.com/Dahl99/discord-bot/internal/discord"
 	"io"
 	"log"
 	"log/slog"
