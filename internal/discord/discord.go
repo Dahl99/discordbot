@@ -1,12 +1,13 @@
 package discord
 
 import (
-	"github.com/bwmarrin/discordgo"
 	"log/slog"
 	"os"
+
+	"github.com/bwmarrin/discordgo"
 )
 
-// SearchGuildByChannelID search the guild ID
+// SearchGuildByChannelID search the guild ID.
 func SearchGuildByChannelID(textChannelID string) (guildID string) {
 	channel, _ := Session.Channel(textChannelID)
 	guildID = channel.GuildID
@@ -25,7 +26,7 @@ func SearchVoiceChannelByUserID(userID string) (voiceChannelID string) {
 	return ""
 }
 
-// SendChannelMessage sends a channel message to channel with channel id equal to m.ChannelID
+// SendChannelMessage sends a channel message to channel with channel id equal to m.ChannelID.
 func SendChannelMessage(channelID string, message string) {
 	_, err := Session.ChannelMessageSend(channelID, message)
 	if err != nil {

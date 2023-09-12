@@ -1,132 +1,103 @@
 package music
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
 	"errors"
+	"log/slog"
+
+	"google.golang.org/api/option"
+
 	"github.com/Dahl99/discord-bot/internal/config"
 	"github.com/Dahl99/discord-bot/internal/discord"
-	"log"
-	"net/http"
-	"os/exec"
 
 	"github.com/bwmarrin/discordgo"
+	ytdl "github.com/kkdai/youtube/v2"
+	"google.golang.org/api/youtube/v3"
 )
-
-// youtubeSearchEndpoint contains YouTube endpoint for searching after a video
-const youtubeSearchEndpoint string = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&key="
 
 // youtubeFindEndpoint contains endpoint for finding more details about a video
 const youtubeFindEndpoint string = "https://www.googleapis.com/youtube/v3/videos?part=snippet&key="
 
-// Structs for doing a Youtube search
-type ytPageSearch struct {
-	Items []itemsSearch `json:"items"`
+type Video struct {
+	VideoID    string
+	VideoTitle string
 }
 
-type itemsSearch struct {
-	Id      id      `json:"id"`
-	Snippet snippet `json:"snippet"`
-}
+func SearchByName(name string) (*Video, error) {
+	ctx := context.Background()
+	youtubeService, err := youtube.NewService(ctx, option.WithAPIKey(config.GetYoutubeApiKey()))
 
-type id struct {
-	VideoId string `json:"videoId"`
-}
-
-type snippet struct {
-	Title string `json:"title"`
-}
-
-type videoResponse struct {
-	Formats []struct {
-		Url string `json:"url"`
-	} `json:"formats"`
-}
-
-// Structs for finding a video on youtube
-type ytPageFind struct {
-	Items []itemsFind `json:"items"`
-}
-
-type itemsFind struct {
-	Snippet snippet `json:"snippet"`
-}
-
-func ytSearch(name string) (string, string, error) {
-
-	res, err := http.Get(youtubeSearchEndpoint + config.GetYoutubeApiKey() + "&q=" + name)
+	call := youtubeService.Search.List([]string{"id", "snippet"}).Q(name).MaxResults(1)
+	res, err := call.Do()
 	if err != nil {
-		log.Println(http.StatusServiceUnavailable)
-		return "", "", err
+		slog.Warn("failed to search YouTube for video", "error", err)
+		return nil, err
 	}
 
-	var page ytPageSearch
+	var (
+		videoID, videoTitle string
+	)
 
-	err = json.NewDecoder(res.Body).Decode(&page)
-	if err != nil {
-		log.Println(err)
-		return "", "", err
+	for _, item := range res.Items {
+		videoID = item.Id.VideoId
+		videoTitle = item.Snippet.Title
 	}
 
-	res.Body.Close()
-
-	if len(page.Items) < 1 {
-		log.Println("INFO: empty youtube search result")
-		err = errors.New("empty youtube search result")
-		return "", "", err
+	if videoID == "" {
+		slog.Info("video not found on YouTube")
+		return nil, errors.New("video not found on YouTube")
 	}
-	videoId := page.Items[0].Id.VideoId
-	videoTitle := page.Items[0].Snippet.Title
 
-	return videoId, videoTitle, nil
+	return &Video{
+		VideoID:    videoID,
+		VideoTitle: videoTitle,
+	}, nil
 }
 
-func ytFind(videoId string) (string, error) {
-	res, err := http.Get(youtubeFindEndpoint + config.GetYoutubeApiKey() + "&id=" + videoId)
+func findByVideoID(videoID string) (*Video, error) {
+	ctx := context.Background()
+	youtubeService, err := youtube.NewService(ctx, option.WithAPIKey(config.GetYoutubeApiKey()))
+
+	call := youtubeService.Videos.List([]string{"id", "snippet"}).Id(videoID).MaxResults(1)
+	res, err := call.Do()
 	if err != nil {
-		log.Println(http.StatusServiceUnavailable)
-		return "", err
+		slog.Warn("failed to find video on YouTube", "error", err)
+		return nil, err
 	}
 
-	var page ytPageFind
+	var videoTitle string
 
-	err = json.NewDecoder(res.Body).Decode(&page)
-	if err != nil {
-		log.Println(err)
-		return "", err
+	for _, item := range res.Items {
+		videoTitle = item.Snippet.Title
 	}
 
-	res.Body.Close()
-
-	if len(page.Items) < 1 {
-		log.Println("INFO: empty youtube search result")
-		err = errors.New("empty youtube search result")
-		return "", err
+	if videoID == "" {
+		slog.Info("video not found on YouTube")
+		return nil, errors.New("video not found on YouTube")
 	}
 
-	videoTitle := page.Items[0].Snippet.Title
-
-	return videoTitle, nil
+	return &Video{
+		VideoID:    videoID,
+		VideoTitle: videoTitle,
+	}, nil
 }
 
-func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.MessageCreate) (songStruct PkgSong, err error) {
+func execYtdl(video *Video, v *VoiceInstance, m *discordgo.MessageCreate) (songStruct PkgSong, err error) {
+	client := ytdl.Client{
+		Debug:       false,
+		HTTPClient:  nil,
+		MaxRoutines: 0,
+		ChunkSize:   0,
+	}
 
-	cmd := exec.Command("youtube-dl", "--skip-download", "--print-json", "--flat-playlist", videoId)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-
-	err = cmd.Run()
+	youTubeVideo, err := client.GetVideo("https://www.youtube.com/watch?v=" + video.VideoID)
 	if err != nil {
-		log.Println("ERROR: something wrong happened when running youtube-dl")
+		slog.Warn("failed to get video from YouTube", "error", err)
 		return
 	}
 
-	var videoRes videoResponse
-	err = json.NewDecoder(&out).Decode(&videoRes)
-	if err != nil {
-		log.Println("ERROR: error occurred when decoding video response")
-		return
-	}
+	youTubeVideo.Formats.Sort()
+	formatURL := youTubeVideo.Formats[0].URL
 
 	guildID := discord.SearchGuildByChannelID(m.ChannelID)
 	member, _ := v.session.GuildMember(guildID, m.Author.ID)
@@ -142,9 +113,9 @@ func execYtdl(videoId string, videoTitle string, v *VoiceInstance, m *discordgo.
 		m.ChannelID,
 		userName,
 		m.Author.ID,
-		videoId,
-		videoTitle,
-		videoRes.Formats[2].Url,
+		video.VideoID,
+		video.VideoTitle,
+		formatURL,
 	}
 
 	// var song_struct PkgSong

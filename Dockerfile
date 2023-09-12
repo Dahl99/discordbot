@@ -34,10 +34,6 @@ RUN apt-get update && \
 # Symlink python3 to python
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# Download youtube-dl and chmod correct permissions
-RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
-RUN chmod a+rx /usr/local/bin/youtube-dl
-
 # Copy stockfish from builder and add to path
 COPY --from=builder /usr/games/stockfish /usr/games
 ENV PATH /usr/games:$PATH

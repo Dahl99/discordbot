@@ -1,12 +1,13 @@
 package music
 
 import (
-	"github.com/Dahl99/discord-bot/internal/discord"
 	"log"
 	"log/slog"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/Dahl99/discord-bot/internal/discord"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -19,7 +20,7 @@ func StartRoutine() {
 	go globalPlay(SongSignal)
 }
 
-func joinVoice(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) *VoiceInstance {
+func joinVoiceChannel(v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) *VoiceInstance {
 	voiceChannelID := discord.SearchVoiceChannelByUserID(m.Author.ID)
 	if voiceChannelID == "" {
 		slog.Warn("Voice channel id not found when trying to join voice channel")
@@ -81,7 +82,7 @@ func LeaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
 func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.MessageCreate) {
 	if v == nil {
 		slog.Info("bot is not in a voice channel, joining now", "userId", m.Author.ID, "username", m.Author.Username)
-		v = joinVoice(v, s, m)
+		v = joinVoiceChannel(v, s, m)
 
 		if v == nil {
 			slog.Warn("failed to join voice channel", "userId", m.Author.ID, "username", m.Author.Username)
@@ -95,9 +96,7 @@ func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		return
 	}
 
-	var videoId string
-	var videoTitle string
-	var err error
+	var video *Video
 
 	// If a youtube url is sent as argument
 	if strings.Contains(n[0], youtubeVideoUrl) {
@@ -109,11 +108,11 @@ func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		}
 
 		query := urlParser.Query()
-		videoId = query.Get("v")
+		urlVideoID := query.Get("v")
 
-		videoTitle, err = ytFind(videoId)
+		video, err = findByVideoID(urlVideoID)
 		if err != nil {
-			slog.Info("failed to find video on YouTube from videoId", "videoId", videoId, "error", err)
+			slog.Info("failed to find video on YouTube from videoID", "videoID", urlVideoID, "error", err)
 			discord.SendChannelMessage(m.ChannelID, "**[Music]** Oops, something went wrong when fetching title on YouTube")
 			return
 		}
@@ -121,7 +120,8 @@ func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		// If argument(s) is not a youtube url
 	} else {
 		name := strings.Join(n, "_")
-		videoId, videoTitle, err = ytSearch(name)
+		var err error
+		video, err = SearchByName(name)
 		if err != nil {
 			slog.Info("failed to find song by searching YouTube", "name", name, "error", err)
 			discord.SendChannelMessage(m.ChannelID, "**[Music]** Can't find a song with that name")
@@ -129,7 +129,7 @@ func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		}
 	}
 
-	song, err := execYtdl(videoId, videoTitle, v, m)
+	song, err := execYtdl(video, v, m)
 	if err != nil || song.data.ID == "" {
 		if err != nil {
 			slog.Warn("failed to get song data through youtube-dl", "error", err)

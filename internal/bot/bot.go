@@ -2,16 +2,15 @@ package bot
 
 import (
 	"fmt"
-	"github.com/Dahl99/discord-bot/internal/commands/chess"
-	"github.com/Dahl99/discord-bot/internal/commands/music"
-	"github.com/Dahl99/discord-bot/internal/config"
-	"github.com/Dahl99/discord-bot/internal/database"
-	"github.com/Dahl99/discord-bot/internal/database/migrations"
-	"github.com/Dahl99/discord-bot/internal/discord"
-	"github.com/Dahl99/discord-bot/internal/handlers"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/Dahl99/discord-bot/internal/commands/chess"
+	"github.com/Dahl99/discord-bot/internal/commands/music"
+	"github.com/Dahl99/discord-bot/internal/config"
+	"github.com/Dahl99/discord-bot/internal/discord"
+	"github.com/Dahl99/discord-bot/internal/handlers"
 )
 
 func Start() {
@@ -29,8 +28,8 @@ func Start() {
 	chess.InitAi()
 
 	// Connect to database and run migrations
-	database.Connect()
-	migrations.AutoMigrate()
+	//database.Connect()
+	//migrations.AutoMigrate()
 
 	fmt.Println("Bot is running. Press Ctrl + C to exit.")
 	sc := make(chan os.Signal, 1)
