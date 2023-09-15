@@ -139,7 +139,7 @@ func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		return
 	}
 
-	discord.SendChannelMessage(m.ChannelID, "**[Music]** "+song.data.User+" has added **"+song.data.Title+"** to the queue")
+	discord.SendChannelMessage(m.ChannelID, "**[Music]** "+song.data.UserName+" has added **"+song.data.Title+"** to the queue")
 
 	go func() {
 		SongSignal <- song

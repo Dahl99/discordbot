@@ -28,9 +28,9 @@ type VoiceInstance struct {
 
 type Song struct {
 	ChannelID string
-	User      string
+	UserName  string
 	ID        string
-	VidID     string
+	VideoID   string
 	Title     string
 	VideoURL  string
 }
