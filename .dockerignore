@@ -2,3 +2,5 @@
 .idea/
 .gitignore
 README.md
+.golangci.yml
+.env.example
