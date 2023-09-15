@@ -1,7 +1,6 @@
 package music
 
 import (
-	"log"
 	"log/slog"
 	"net/url"
 	"strings"
@@ -29,7 +28,7 @@ func joinVoiceChannel(v *VoiceInstance, s *discordgo.Session, m *discordgo.Messa
 	}
 
 	if v != nil {
-		log.Println("INFO: Voice instance already created")
+		slog.Info("voice instance already created")
 	} else {
 		guildID := discord.SearchGuildByChannelID(m.ChannelID)
 		mutex.Lock()
@@ -72,7 +71,7 @@ func LeaveVoice(v *VoiceInstance, m *discordgo.MessageCreate) {
 		return
 	}
 
-	log.Println("INFO: Voice channel left")
+	slog.Info("voice channel left")
 	mutex.Lock()
 	delete(VoiceInstances, v.GuildID)
 	mutex.Unlock()

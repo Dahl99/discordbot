@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"log"
-
 	"github.com/Dahl99/discord-bot/internal/commands/music"
 
 	"github.com/Dahl99/discord-bot/internal/commands"
@@ -57,7 +55,7 @@ func MessageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	log.Println("Message: " + m.Content)
+	slog.Info("processing command", "command", m.Content)
 
 	prefix := config.GetBotPrefix()
 	guildID := discord.SearchGuildByChannelID(m.ChannelID)
