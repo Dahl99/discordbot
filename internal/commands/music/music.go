@@ -129,7 +129,7 @@ func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		}
 	}
 
-	song, err := execYtdl(video, v, m)
+	song, err := getSongDataByVideo(video, v, m)
 	if err != nil || song.data.ID == "" {
 		if err != nil {
 			slog.Warn("failed to get song data through youtube-dl", "error", err)

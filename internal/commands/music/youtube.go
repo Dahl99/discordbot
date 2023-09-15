@@ -93,7 +93,7 @@ func findVideoByVideoID(videoID string) (*Video, error) {
 	}, nil
 }
 
-func execYtdl(video *Video, v *VoiceInstance, m *discordgo.MessageCreate) (songStruct PkgSong, err error) {
+func getSongDataByVideo(video *Video, v *VoiceInstance, m *discordgo.MessageCreate) (songStruct PkgSong, err error) {
 	client := ytdl.Client{
 		Debug:       false,
 		HTTPClient:  nil,
