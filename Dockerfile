@@ -15,7 +15,7 @@ RUN go mod download all
 
 # Copy source files and build executable
 COPY . ./
-RUN go build -v -o /bin/app ./cmd/discordbot/main.go
+RUN CGO_ENABLED=0 go build -v -o /bin/app ./cmd/discordbot/main.go
 
 # Production container
 FROM debian:bullseye-slim AS final
@@ -26,19 +26,13 @@ WORKDIR /app
 # Update and install apt dependencies
 RUN apt-get update && \
     apt-get install -q -y \
-    curl \
-    python3 \
     ffmpeg \
     inkscape
-
-# Symlink python3 to python
-RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Copy stockfish from builder and add to path
 COPY --from=builder /usr/games/stockfish /usr/games
 ENV PATH /usr/games:$PATH
 
-# Copy config.json file
 COPY .env ./
 
 # Copy executable from builder

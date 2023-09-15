@@ -1,9 +1,10 @@
 package discord
 
 import (
+	"log/slog"
+
 	"github.com/Dahl99/discord-bot/internal/config"
 	"github.com/bwmarrin/discordgo"
-	"log/slog"
 )
 
 var Session *discordgo.Session
@@ -15,7 +16,7 @@ func InitSession() {
 		slog.Error("failed to create discord session", "error", err)
 	}
 
-	Session.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentGuildMessageTyping
+	Session.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentGuildMessageTyping | discordgo.IntentGuildVoiceStates | discordgo.IntentGuilds
 }
 
 func InitConnection() {

@@ -1,11 +1,11 @@
 package music
 
 import (
-	"github.com/Dahl99/discord-bot/internal/discord"
 	"io"
-	"log"
 	"log/slog"
 	"sync"
+
+	"github.com/Dahl99/discord-bot/internal/discord"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/jung-m/dca"
@@ -55,6 +55,7 @@ func globalPlay(songSig chan PkgSong) {
 	}
 }
 
+// Skip skips the current playing song in the queue.
 func (v *VoiceInstance) Skip() bool {
 	if v.speaking {
 		if v.pause {
@@ -68,7 +69,7 @@ func (v *VoiceInstance) Skip() bool {
 	return false
 }
 
-// Stop stops the audio
+// Stop stops the audio.
 func (v *VoiceInstance) Stop() {
 	v.stop = true
 	if v.encoder != nil {
@@ -76,24 +77,26 @@ func (v *VoiceInstance) Stop() {
 	}
 }
 
-// QueueAdd
+// QueueAdd adds a song to the queue.
 func (v *VoiceInstance) QueueAdd(song Song) {
 	v.queueMutex.Lock()
 	defer v.queueMutex.Unlock()
+	slog.Info("adding song to queue", "song", song)
 	v.queue = append(v.queue, song)
 }
 
-// QueueGetSong
+// QueueGetSong gets the first song from the queue.
 func (v *VoiceInstance) QueueGetSong() (song Song) {
 	v.queueMutex.Lock()
 	defer v.queueMutex.Unlock()
 	if len(v.queue) != 0 {
+		slog.Info("Getting first song from queue")
 		return v.queue[0]
 	}
 	return
 }
 
-// QueueRemoveFirst
+// QueueRemoveFirst removes the first song from the queue.
 func (v *VoiceInstance) QueueRemoveFirst() {
 	v.queueMutex.Lock()
 	defer v.queueMutex.Unlock()
@@ -102,14 +105,14 @@ func (v *VoiceInstance) QueueRemoveFirst() {
 	}
 }
 
-// QueueRemove
-func (v *VoiceInstance) QueueRemove() {
+// QueueClear clears the entire queue.
+func (v *VoiceInstance) QueueClear() {
 	v.queueMutex.Lock()
 	defer v.queueMutex.Unlock()
 	v.queue = []Song{}
 }
 
-// DCA
+// DCA streams the song to the Discord voice channel.
 func (v *VoiceInstance) DCA(url string) {
 	opts := dca.StdEncodeOptions
 	opts.RawOutput = true
@@ -150,7 +153,7 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 	go func() {
 		for {
 			if len(v.queue) == 0 {
-				log.Println("INFO: End of queue")
+				slog.Info("song queue is empty")
 				discord.SendChannelMessage(v.nowPlaying.ChannelID, "**[Music]** End of queue")
 				return
 			}
@@ -172,7 +175,7 @@ func (v *VoiceInstance) PlayQueue(song Song) {
 
 			v.QueueRemoveFirst()
 			if v.stop {
-				v.QueueRemove()
+				v.QueueClear()
 			}
 
 			v.stop = false

@@ -15,17 +15,21 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-// youtubeFindEndpoint contains endpoint for finding more details about a video
-const youtubeFindEndpoint string = "https://www.googleapis.com/youtube/v3/videos?part=snippet&key="
-
 type Video struct {
 	VideoID    string
 	VideoTitle string
 }
 
-func SearchByName(name string) (*Video, error) {
+func SearchVideoByName(name string) (*Video, error) {
+	slog.Info("Searching video by name", "name", name)
+
+	var err error
 	ctx := context.Background()
 	youtubeService, err := youtube.NewService(ctx, option.WithAPIKey(config.GetYoutubeApiKey()))
+	if err != nil {
+		slog.Warn("failed to create YoutubeService", "error", err)
+		return nil, err
+	}
 
 	call := youtubeService.Search.List([]string{"id", "snippet"}).Q(name).MaxResults(1)
 	res, err := call.Do()
@@ -54,9 +58,16 @@ func SearchByName(name string) (*Video, error) {
 	}, nil
 }
 
-func findByVideoID(videoID string) (*Video, error) {
+func findVideoByVideoID(videoID string) (*Video, error) {
+	slog.Info("finding video by ID", "videoID", videoID)
+
 	ctx := context.Background()
+	var err error
 	youtubeService, err := youtube.NewService(ctx, option.WithAPIKey(config.GetYoutubeApiKey()))
+	if err != nil {
+		slog.Warn("failed to create YoutubeService", "error", err)
+		return nil, err
+	}
 
 	call := youtubeService.Videos.List([]string{"id", "snippet"}).Id(videoID).MaxResults(1)
 	res, err := call.Do()
@@ -97,7 +108,7 @@ func execYtdl(video *Video, v *VoiceInstance, m *discordgo.MessageCreate) (songS
 	}
 
 	youTubeVideo.Formats.Sort()
-	formatURL := youTubeVideo.Formats[0].URL
+	formatURL := youTubeVideo.Formats[len(youTubeVideo.Formats)-1].URL
 
 	guildID := discord.SearchGuildByChannelID(m.ChannelID)
 	member, _ := v.session.GuildMember(guildID, m.Author.ID)

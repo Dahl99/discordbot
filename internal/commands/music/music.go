@@ -110,7 +110,7 @@ func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 		query := urlParser.Query()
 		urlVideoID := query.Get("v")
 
-		video, err = findByVideoID(urlVideoID)
+		video, err = findVideoByVideoID(urlVideoID)
 		if err != nil {
 			slog.Info("failed to find video on YouTube from videoID", "videoID", urlVideoID, "error", err)
 			discord.SendChannelMessage(m.ChannelID, "**[Music]** Oops, something went wrong when fetching title on YouTube")
@@ -119,9 +119,9 @@ func PlayMusic(n []string, v *VoiceInstance, s *discordgo.Session, m *discordgo.
 
 		// If argument(s) is not a youtube url
 	} else {
-		name := strings.Join(n, "_")
+		name := strings.Join(n, " ")
 		var err error
-		video, err = SearchByName(name)
+		video, err = SearchVideoByName(name)
 		if err != nil {
 			slog.Info("failed to find song by searching YouTube", "name", name, "error", err)
 			discord.SendChannelMessage(m.ChannelID, "**[Music]** Can't find a song with that name")
