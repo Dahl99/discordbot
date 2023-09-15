@@ -1,4 +1,4 @@
-# discord-bot
+# discordbot
 
 <!-- TABLE OF CONTENTS -->
 <details open="open">
