@@ -12,7 +12,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// youtubeVideoUrl is a constant containing endpoint for a youtube video
+// youtubeVideoUrl is a constant containing endpoint for a youtube video.
 const youtubeVideoUrl string = "https://www.youtube.com/watch?v="
 
 func StartRoutine() {
