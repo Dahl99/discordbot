@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GoLinterSettings">
+    <option name="concurrency" value="4" />
+    <option name="enabledLinters">
+      <list>
+        <option value="exportloopref" />
+        <option value="importas" />
+        <option value="noctx" />
+        <option value="errname" />
+        <option value="reassign" />
+        <option value="errcheck" />
+        <option value="gochecknoinits" />
+        <option value="rowserrcheck" />
+        <option value="sqlclosecheck" />
+        <option value="thelper" />
+        <option value="tenv" />
+        <option value="ineffassign" />
+        <option value="bodyclose" />
+        <option value="testpackage" />
+        <option value="unparam" />
+        <option value="unconvert" />
+        <option value="whitespace" />
+        <option value="paralleltest" />
+        <option value="godot" />
+        <option value="goimports" />
+        <option value="prealloc" />
+      </list>
+    </option>
+    <option name="goLinterExe" value="C:\Users\Public\golangci-lint.exe" />
+    <option name="linterSelected" value="true" />
+  </component>
+</project>
