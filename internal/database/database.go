@@ -1,8 +1,10 @@
 package database
 
 import (
-	"github.com/Dahl99/discord-bot/internal/config"
 	"log/slog"
+
+	"github.com/Dahl99/discord-bot/internal/config"
+
 	"time"
 
 	"gorm.io/driver/mysql"

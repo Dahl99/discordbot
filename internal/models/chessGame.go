@@ -2,7 +2,9 @@ package models
 
 import (
 	"database/sql/driver"
+
 	"github.com/Dahl99/discord-bot/internal/database"
+
 	"time"
 
 	"gorm.io/gorm"

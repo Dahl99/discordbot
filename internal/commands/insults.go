@@ -2,20 +2,21 @@ package commands
 
 import (
 	"encoding/json"
-	"github.com/Dahl99/discord-bot/internal/discord"
 	"log/slog"
 	"net/http"
+
+	"github.com/Dahl99/discord-bot/internal/discord"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-// insultUrl contains the url for the API generating insults
+// insultUrl contains the url for the API generating insults.
 const insultUrl string = "https://evilinsult.com/generate_insult.php?lang=en&type=json"
 
-// evilInsultNotAvailable String to be sent if Evil Insult API isn't available
+// evilInsultNotAvailable String to be sent if Evil Insult API isn't available.
 const evilInsultNotAvailable string = "Evil Insult API not available at the moment. Please try again later."
 
-// Struct to store fetched data from Evil Insult API
+// Struct to store fetched data from Evil Insult API.
 type insult struct {
 	Insult string `json:"insult"`
 }
@@ -25,7 +26,7 @@ func PostInsult(m *discordgo.MessageCreate) {
 }
 
 func getInsult() string {
-	res, err := http.Get(insultUrl) // Fetching an insult
+	res, err := http.Get(insultUrl)
 	if err != nil {
 		slog.Warn("failed to get insult", "error", err)
 		return evilInsultNotAvailable

@@ -1,8 +1,10 @@
 package config
 
 import (
-	"github.com/joho/godotenv"
 	"log/slog"
+
+	"github.com/joho/godotenv"
+
 	"os"
 )
 
@@ -23,10 +25,10 @@ const APP_ENVIRONMENT_LOCAL string = "LOCAL"
 const APP_ENVIRONMENT_TEST string = "TEST"
 const APP_ENVIRONMENT_PRODUCTION string = "PRODUCTION"
 
-// config contains all environment variables that should be included in .env
+// config contains all environment variables that should be included in the .env file.
 var config *configuration
 
-// Load loads the environment variables from the .env file
+// Load loads the environment variables from the .env file.
 func Load() {
 	err := godotenv.Load()
 	if err != nil {

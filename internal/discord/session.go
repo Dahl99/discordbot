@@ -4,6 +4,7 @@ import (
 	"log/slog"
 
 	"github.com/Dahl99/discord-bot/internal/config"
+
 	"github.com/bwmarrin/discordgo"
 )
 

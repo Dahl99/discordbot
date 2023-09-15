@@ -2,25 +2,26 @@ package commands
 
 import (
 	"encoding/json"
-	"github.com/Dahl99/discord-bot/internal/discord"
 	"log/slog"
 	"net/http"
+
+	"github.com/Dahl99/discord-bot/internal/discord"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-// adviceSlipURL contains url to adviceslip API
+// adviceSlipURL contains url to adviceslip API.
 const adviceSlipURL string = "https://api.adviceslip.com/advice"
 
-// adviceSlipNotAvailable contains string to be sent if adviceslip API is unavailable
+// adviceSlipNotAvailable contains string to be sent if adviceslip API is unavailable.
 const adviceSlipNotAvailable string = "Adviceslip API not available at the moment."
 
-// Struct used to store advice in json
+// Struct used to store advice in json.
 type slip struct {
 	Advice string `json:"advice"`
 }
 
-// Struct containing the advice slip
+// Struct containing the advice slip.
 type allSlips struct {
 	Slips slip `json:"slip"`
 }

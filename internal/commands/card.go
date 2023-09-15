@@ -2,21 +2,22 @@ package commands
 
 import (
 	"encoding/json"
-	"github.com/Dahl99/discord-bot/internal/discord"
 	"log/slog"
 	"net/http"
 	"strings"
 
+	"github.com/Dahl99/discord-bot/internal/discord"
+
 	"github.com/bwmarrin/discordgo"
 )
 
-// scryfallBaseUrl contains the root of the url
+// scryfallBaseUrl contains the root of the url.
 const scryfallBaseUrl string = "https://api.scryfall.com/cards/named?fuzzy="
 
-// ScryfallNotAvailable contains string to be sent if scryfall API is unavailable
+// ScryfallNotAvailable contains string to be sent if scryfall API is unavailable.
 const ScryfallNotAvailable string = "Scryfall API not available at the moment."
 
-// Sub struct in exactResult struct. It's used to store the imageURIs from scryfall api
+// Sub struct in exactResult struct. It's used to store the imageURIs from scryfall api.
 type imageURI struct {
 	Png string `json:"png"`
 }
@@ -30,7 +31,7 @@ type prices struct {
 	UsdFoil string `json:"usd_foil"`
 }
 
-// Struct used to store data from second http.Get()
+// Struct used to store data from second get request.
 type fuzzyResult struct {
 	Name   string       `json:"name"`
 	Image  imageURI     `json:"image_uris"`
@@ -45,9 +46,8 @@ func PostCard(cmd []string, m *discordgo.MessageCreate) {
 	}
 }
 
-// getCard() fetches a card based on which card name used in command
+// getCard() fetches a card based on which card name used in command.
 func getCard(n []string) string {
-
 	name := strings.Join(n[1:], "_")
 
 	if len(name) < 3 {
@@ -56,7 +56,7 @@ func getCard(n []string) string {
 
 	URL := scryfallBaseUrl + name // Sets url for exact card get request
 
-	res, err := http.Get(URL) // Fetching exact card
+	res, err := http.Get(URL)
 	if err != nil {
 		slog.Warn("failed to get card from Scryfall", "error", err)
 		return ScryfallNotAvailable
@@ -97,5 +97,5 @@ func getCard(n []string) string {
 		result += "\n" + card.Faces[0].Image.Png + "\n" + card.Faces[1].Image.Png
 	}
 
-	return result // Returning url to png version of card
+	return result
 }

@@ -2,17 +2,18 @@ package commands
 
 import (
 	"encoding/json"
-	"github.com/Dahl99/discord-bot/internal/discord"
 	"log/slog"
 	"net/http"
+
+	"github.com/Dahl99/discord-bot/internal/discord"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-// kanyeRestEndpoint contains endpoint for kanye rest API
+// kanyeRestEndpoint contains endpoint for kanye rest API.
 const kanyeRestEndpoint string = "https://api.kanye.rest/"
 
-// kanyeRestUnavailable is to be sent if kanye rest api is unavailable
+// kanyeRestUnavailable is to be sent if kanye rest api is unavailable.
 const kanyeRestUnavailable string = "Oops, something went wrong when getting Kanye quote"
 
 type kanyeQuote struct {

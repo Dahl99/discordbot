@@ -1,9 +1,10 @@
 package commands
 
 import (
-	"github.com/Dahl99/discord-bot/internal/discord"
 	"math/rand"
 	"strconv"
+
+	"github.com/Dahl99/discord-bot/internal/discord"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -17,7 +18,6 @@ func RollDice(cmd []string, m *discordgo.MessageCreate) {
 				rolled := strconv.Itoa(rand.Intn(dieSides-1) + 1) // Rolls die and returns result as string
 				discord.SendChannelMessage(m.ChannelID, m.Author.Mention()+" rolled "+rolled)
 			}
-
 		} else {
 			discord.SendChannelMessage(m.ChannelID, m.Author.Mention()+" "+cmd[1]+" is not a number!")
 		}
