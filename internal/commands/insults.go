@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/Dahl99/discord-bot/internal/discord"
+	"github.com/Dahl99/discordbot/internal/discord"
 
 	"github.com/bwmarrin/discordgo"
 )

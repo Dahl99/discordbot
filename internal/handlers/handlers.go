@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"github.com/Dahl99/discord-bot/internal/commands/music"
+	"github.com/Dahl99/discordbot/internal/commands/music"
 
-	"github.com/Dahl99/discord-bot/internal/commands"
-	"github.com/Dahl99/discord-bot/internal/commands/chess"
-	"github.com/Dahl99/discord-bot/internal/config"
-	"github.com/Dahl99/discord-bot/internal/discord"
+	"github.com/Dahl99/discordbot/internal/commands"
+	"github.com/Dahl99/discordbot/internal/commands/chess"
+	"github.com/Dahl99/discordbot/internal/config"
+	"github.com/Dahl99/discordbot/internal/discord"
 
 	"log/slog"
 	"strings"

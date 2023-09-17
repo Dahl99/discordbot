@@ -1,4 +1,4 @@
-module github.com/Dahl99/discord-bot
+module github.com/Dahl99/discordbot
 
 go 1.21
 

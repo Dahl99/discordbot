@@ -6,11 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Dahl99/discord-bot/internal/commands/chess"
-	"github.com/Dahl99/discord-bot/internal/commands/music"
-	"github.com/Dahl99/discord-bot/internal/config"
-	"github.com/Dahl99/discord-bot/internal/discord"
-	"github.com/Dahl99/discord-bot/internal/handlers"
+	"github.com/Dahl99/discordbot/internal/commands/chess"
+	"github.com/Dahl99/discordbot/internal/commands/music"
+	"github.com/Dahl99/discordbot/internal/config"
+	"github.com/Dahl99/discordbot/internal/discord"
+	"github.com/Dahl99/discordbot/internal/handlers"
 )
 
 func Start() {

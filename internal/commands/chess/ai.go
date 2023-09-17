@@ -1,9 +1,10 @@
 package chess
 
 import (
-	"github.com/Dahl99/discord-bot/internal/models"
 	"log/slog"
 	"time"
+
+	"github.com/Dahl99/discordbot/internal/models"
 
 	"github.com/notnil/chess"
 	"github.com/notnil/chess/uci"

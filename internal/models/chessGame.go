@@ -3,7 +3,7 @@ package models
 import (
 	"database/sql/driver"
 
-	"github.com/Dahl99/discord-bot/internal/database"
+	"github.com/Dahl99/discordbot/internal/database"
 
 	"time"
 

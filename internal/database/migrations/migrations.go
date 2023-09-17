@@ -1,8 +1,8 @@
 package migrations
 
 import (
-	"github.com/Dahl99/discord-bot/internal/database"
-	"github.com/Dahl99/discord-bot/internal/models"
+	"github.com/Dahl99/discordbot/internal/database"
+	"github.com/Dahl99/discordbot/internal/models"
 )
 
 func AutoMigrate() {

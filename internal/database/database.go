@@ -3,7 +3,7 @@ package database
 import (
 	"log/slog"
 
-	"github.com/Dahl99/discord-bot/internal/config"
+	"github.com/Dahl99/discordbot/internal/config"
 
 	"time"
 

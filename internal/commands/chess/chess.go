@@ -1,15 +1,16 @@
 package chess
 
 import (
-	"github.com/Dahl99/discord-bot/internal/database"
-	"github.com/Dahl99/discord-bot/internal/discord"
-	"github.com/Dahl99/discord-bot/internal/models"
 	"log/slog"
 	"math/rand"
 	"os"
 	"os/exec"
 	"strconv"
 	"strings"
+
+	"github.com/Dahl99/discordbot/internal/database"
+	"github.com/Dahl99/discordbot/internal/discord"
+	"github.com/Dahl99/discordbot/internal/models"
 
 	"github.com/notnil/chess"
 	"github.com/notnil/chess/image"
