@@ -22,7 +22,9 @@ func InitAi() {
 }
 
 func StopChessAi() {
-	eng.Close()
+	if eng != nil {
+		eng.Close()
+	}
 }
 
 func (s *chessSession) getAiMove() *chess.Move {

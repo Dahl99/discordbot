@@ -31,13 +31,13 @@ func Start() {
 	//database.Connect()
 	//migrations.AutoMigrate()
 
+	defer chess.StopChessAi()
+	defer discord.Session.Close()
+
 	fmt.Println("Bot is running. Press Ctrl + C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
-
-	chess.StopChessAi()
-	discord.Session.Close()
 }
 
 func addHandlers() {
